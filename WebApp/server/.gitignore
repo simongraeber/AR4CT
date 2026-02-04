@@ -48,6 +48,9 @@ Thumbs.db
 # Testing
 .pytest_cache/
 .coverage
+
+# Uploaded files
+data/
 htmlcov/
 .tox/
 .nox/

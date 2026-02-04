@@ -23,3 +23,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Private documentation (contains server credentials)
+private.Readme.md
+**/private.Readme.md
+*.prod
