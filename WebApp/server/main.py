@@ -380,3 +380,78 @@ async def upload_fbx_for_scan(scan_id: str, file: UploadFile = File(...)):
         "size": total_size,
         "fbx_url": f"/scans/{scan_id}/fbx"
     }
+
+
+# --- Upload raw CT scan for existing scan ---
+
+@app.post("/scans/{scan_id}/ct")
+async def upload_ct_for_scan(scan_id: str, file: UploadFile = File(...)):
+    """
+    Upload/replace the raw CT scan file for an existing scan.
+    Supports: .zip, .nii, .nii.gz, .mhd, .nrrd
+    """
+    if not scan_exists(scan_id):
+        raise HTTPException(status_code=404, detail="Scan not found")
+    
+    original_filename = file.filename or "ct_scan"
+    scan_dir = get_scan_dir(scan_id)
+    ct_path = scan_dir / f"ct_original_{original_filename}"
+    
+    total_size = 0
+    try:
+        with open(ct_path, "wb") as buffer:
+            while chunk := await file.read(1024 * 1024):
+                total_size += len(chunk)
+                if total_size > MAX_FILE_SIZE:
+                    buffer.close()
+                    if ct_path.exists():
+                        os.remove(ct_path)
+                    raise HTTPException(
+                        status_code=413,
+                        detail=f"File too large. Maximum size is {MAX_FILE_SIZE / (1024**2):.0f} MB"
+                    )
+                buffer.write(chunk)
+    except HTTPException:
+        raise
+    except Exception as e:
+        if ct_path.exists():
+            os.remove(ct_path)
+        raise HTTPException(status_code=500, detail=f"Failed to save CT: {str(e)}")
+    
+    metadata = load_metadata(scan_id)
+    metadata["ct_filename"] = original_filename
+    metadata["ct_size"] = total_size
+    metadata["ct_uploaded_at"] = datetime.utcnow().isoformat() + "Z"
+    save_metadata(scan_id, metadata)
+    
+    return {
+        "scan_id": scan_id,
+        "message": "CT scan uploaded successfully",
+        "filename": original_filename,
+        "size": total_size
+    }
+
+
+# --- Download raw CT scan ---
+
+@app.get("/scans/{scan_id}/ct")
+async def download_ct(scan_id: str):
+    """Download the raw CT scan file for a scan."""
+    if not scan_exists(scan_id):
+        raise HTTPException(status_code=404, detail="Scan not found")
+    
+    scan_dir = get_scan_dir(scan_id)
+    # Find CT file (starts with ct_original_)
+    ct_files = list(scan_dir.glob("ct_original_*"))
+    
+    if not ct_files:
+        raise HTTPException(status_code=404, detail="CT scan not found")
+    
+    ct_path = ct_files[0]
+    original_filename = ct_path.name.replace("ct_original_", "")
+    
+    return FileResponse(
+        path=ct_path,
+        filename=original_filename,
+        media_type="application/octet-stream"
+    )
