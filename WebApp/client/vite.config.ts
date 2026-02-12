@@ -11,4 +11,19 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
+  worker: {
+    format: 'es',  // Use ES modules for workers (required for Cornerstone.js)
+  },
+  optimizeDeps: {
+    exclude: ['@cornerstonejs/dicom-image-loader'],
+  },
 })
