@@ -455,3 +455,113 @@ async def download_ct(scan_id: str):
         filename=original_filename,
         media_type="application/octet-stream"
     )
+
+
+# --- STL Upload (from RunPod segmentation) ---
+
+@app.post("/scans/{scan_id}/stl/{organ}")
+async def upload_stl(
+    scan_id: str,
+    organ: str,
+    file: UploadFile = File(...)
+):
+    """
+    Upload an STL file for a specific organ segmentation.
+    Used by RunPod to upload results directly.
+    """
+    if not scan_exists(scan_id):
+        raise HTTPException(status_code=404, detail="Scan not found")
+    
+    # Sanitize organ name
+    safe_organ = "".join(c for c in organ if c.isalnum() or c in "_-").lower()
+    if not safe_organ:
+        raise HTTPException(status_code=400, detail="Invalid organ name")
+    
+    scan_dir = get_scan_dir(scan_id)
+    stl_dir = scan_dir / "stl"
+    stl_dir.mkdir(exist_ok=True)
+    stl_path = stl_dir / f"{safe_organ}.stl"
+    
+    total_size = 0
+    try:
+        with open(stl_path, "wb") as buffer:
+            while chunk := await file.read(1024 * 1024):
+                total_size += len(chunk)
+                if total_size > 100 * 1024 * 1024:  # 100 MB max per STL
+                    buffer.close()
+                    if stl_path.exists():
+                        os.remove(stl_path)
+                    raise HTTPException(status_code=413, detail="STL file too large")
+                buffer.write(chunk)
+    except HTTPException:
+        raise
+    except Exception as e:
+        if stl_path.exists():
+            os.remove(stl_path)
+        raise HTTPException(status_code=500, detail=f"Failed to save STL: {str(e)}")
+    
+    # Update metadata
+    metadata = load_metadata(scan_id)
+    if "stl_files" not in metadata:
+        metadata["stl_files"] = {}
+    metadata["stl_files"][safe_organ] = {
+        "size": total_size,
+        "uploaded_at": datetime.utcnow().isoformat() + "Z"
+    }
+    metadata["status"] = "segmented"
+    save_metadata(scan_id, metadata)
+    
+    return {
+        "scan_id": scan_id,
+        "organ": safe_organ,
+        "size": total_size,
+        "message": "STL uploaded successfully"
+    }
+
+
+@app.get("/scans/{scan_id}/stl/{organ}")
+async def download_stl(scan_id: str, organ: str):
+    """Download an STL file for a specific organ."""
+    if not scan_exists(scan_id):
+        raise HTTPException(status_code=404, detail="Scan not found")
+    
+    safe_organ = "".join(c for c in organ if c.isalnum() or c in "_-").lower()
+    scan_dir = get_scan_dir(scan_id)
+    stl_path = scan_dir / "stl" / f"{safe_organ}.stl"
+    
+    if not stl_path.exists():
+        raise HTTPException(status_code=404, detail=f"STL for organ '{organ}' not found")
+    
+    return FileResponse(
+        path=stl_path,
+        filename=f"{safe_organ}.stl",
+        media_type="model/stl"
+    )
+
+
+@app.get("/scans/{scan_id}/stl")
+async def list_stls(scan_id: str):
+    """List all available STL files for a scan."""
+    if not scan_exists(scan_id):
+        raise HTTPException(status_code=404, detail="Scan not found")
+    
+    scan_dir = get_scan_dir(scan_id)
+    stl_dir = scan_dir / "stl"
+    
+    if not stl_dir.exists():
+        return {"scan_id": scan_id, "stl_files": [], "count": 0}
+    
+    stl_files = []
+    for stl_path in stl_dir.glob("*.stl"):
+        organ = stl_path.stem
+        stl_files.append({
+            "organ": organ,
+            "size": stl_path.stat().st_size,
+            "url": f"/scans/{scan_id}/stl/{organ}"
+        })
+    
+    return {
+        "scan_id": scan_id,
+        "stl_files": stl_files,
+        "count": len(stl_files)
+    }
