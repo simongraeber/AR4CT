@@ -28,7 +28,7 @@ function ImprintPage() {
                 >
                     <div
                         className="absolute top-0 left-0 w-40 h-40 bg-gradient-to-br from-cyan-400/20 to-blue-500/20
-                        rounded-full filter blur-3xl animate-pulse"
+                        rounded-full filter blur-3xl animate-pulse z-0 pointer-events-none"
                     />
 
                     <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">

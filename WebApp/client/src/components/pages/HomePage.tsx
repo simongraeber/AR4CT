@@ -7,17 +7,20 @@ import { scrollAnimation } from "@/components/shared/scrollAnimation"
 
 function HomePage() {
     return (
-        <Page>
-            {/* Decorative Background Elements */}
-            <div
-                className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-cyan-400 to-blue-500
-                rounded-full filter blur-3xl opacity-15 animate-pulse"
-            />
-            <div
-                className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-br from-cyan-400 to-blue-500
-                rounded-full filter blur-3xl opacity-15 animate-pulse delay-200"
-            />
-
+        <Page
+            backgroundElements={
+                <>
+                    <div
+                        className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-cyan-400 to-blue-500
+                        rounded-full filter blur-3xl opacity-15 animate-pulse"
+                    />
+                    <div
+                        className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-br from-cyan-400 to-blue-500
+                        rounded-full filter blur-3xl opacity-15 animate-pulse delay-200"
+                    />
+                </>
+            }
+        >
             {/* Hero Section */}
             <motion.section
                 className="flex flex-col items-center text-center pt-12 pb-16 px-4 w-full"
@@ -138,7 +141,7 @@ function FeatureCard({ icon, title, description, delay }: FeatureCardProps) {
             whileInView="visible"
             transition={{ delay, duration: 0.6 }}
             viewport={{ once: true, amount: 0.2 }}
-            whileHover={{ scale: 1.05, boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.15)" }}
+            whileHover={{ scale: 1.05, boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.15)", transition: { duration: 0.3 } }}
         >
             {icon}
             <h3 className="text-lg font-semibold">{title}</h3>

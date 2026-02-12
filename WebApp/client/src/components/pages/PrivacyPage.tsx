@@ -19,10 +19,16 @@ function PrivacyPage() {
 
                 <section className="mb-8">
                     <h2 className="text-xl font-semibold mb-3">2. Data Collection</h2>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed mb-3">
                         When you use this application, we may process CT scan data that you voluntarily upload.
                         This data is stored on our servers solely for the purpose of generating 3D reconstructions
-                        and enabling AR visualization. Uploaded files can be deleted at any time.
+                        and enabling AR visualization. Uploaded CT scans may be passed on to third-party
+                        services for processing (e.g. segmentation and 3D model generation). Uploaded files
+                        can be deleted at any time.
+                    </p>
+                    <p className="text-muted-foreground leading-relaxed font-medium">
+                        Please do not upload any personal or patient-identifiable information. Ensure that all
+                        CT scan data is fully anonymized before uploading.
                     </p>
                 </section>
 
@@ -38,7 +44,9 @@ function PrivacyPage() {
                     <h2 className="text-xl font-semibold mb-3">4. Third-Party Services</h2>
                     <p className="text-muted-foreground leading-relaxed">
                         This application does not integrate third-party tracking or advertising services.
-                        The application runs on our own infrastructure.
+                        However, uploaded CT scan data may be sent to external services for processing,
+                        such as automated segmentation. No personal data beyond the uploaded scan files
+                        is shared with these services.
                     </p>
                 </section>
 
