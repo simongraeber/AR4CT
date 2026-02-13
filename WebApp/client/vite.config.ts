@@ -24,6 +24,11 @@ export default defineConfig({
     format: 'es',  // Use ES modules for workers (required for Cornerstone.js)
   },
   optimizeDeps: {
-    exclude: ['@cornerstonejs/dicom-image-loader'],
+    include: [
+      '@cornerstonejs/core',
+      '@cornerstonejs/tools',
+      '@cornerstonejs/dicom-image-loader',
+      'dicom-parser',
+    ],
   },
 })

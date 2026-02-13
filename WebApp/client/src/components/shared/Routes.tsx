@@ -3,6 +3,7 @@ import { lazy, Suspense } from "react"
 import HomePage from "@/components/pages/HomePage"
 import ImprintPage from "@/components/pages/ImprintPage"
 import PrivacyPage from "@/components/pages/PrivacyPage"
+import AppPage from "@/components/pages/AppPage"
 import NotFound from "@/components/shared/NotFound"
 
 const ScanPage = lazy(() => import("@/components/pages/ScanPage"))
@@ -18,6 +19,8 @@ const RoutesComponent = () => {
             } />
             <Route path="/imprint" element={<ImprintPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/app" element={<AppPage />} />
+            <Route path="/app/*" element={<AppPage />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     )

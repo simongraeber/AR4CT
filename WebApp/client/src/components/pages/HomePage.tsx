@@ -136,11 +136,9 @@ function FeatureCard({ icon, title, description, delay }: FeatureCardProps) {
     return (
         <motion.div
             className="rounded-xl border bg-card p-6 text-center shadow-sm flex flex-col items-center gap-4"
-            variants={scrollAnimation}
-            initial="hidden"
-            whileInView="visible"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay, duration: 0.6 }}
-            viewport={{ once: true, amount: 0.2 }}
             whileHover={{ scale: 1.05, boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.15)", transition: { duration: 0.3 } }}
         >
             {icon}
