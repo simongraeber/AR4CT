@@ -9,9 +9,11 @@ RUN pip install --no-cache-dir \
     fastapi \
     uvicorn[standard] \
     python-multipart \
-    qrcode[pil]
+    qrcode[pil] \
+    reportlab
 
 COPY main.py .
+COPY assets/ ./assets/
 
 RUN mkdir -p /app/data
 

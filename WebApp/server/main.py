@@ -280,6 +280,96 @@ async def get_qr_code(scan_id: str):
     )
 
 
+# --- PDF with QR Code and Tool Image ---
+
+TOOL_IMAGE_PATH = Path(__file__).parent / "assets" / "tool_image.png"
+
+@app.get("/scans/{scan_id}/print.pdf")
+async def get_print_pdf(scan_id: str):
+    """
+    Generate a printable A4 PDF containing:
+    - The QR code (15x15 cm) linking to https://ar4ct.com/app/{scan_id}
+    - The tool image (5x5 cm)
+    """
+    if not scan_exists(scan_id):
+        raise HTTPException(status_code=404, detail="Scan not found")
+
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.units import cm
+    from reportlab.pdfgen import canvas as pdf_canvas
+    from PIL import Image
+
+    # --- Generate QR code image ---
+    url = f"https://ar4ct.com/app/{scan_id}"
+    qr = qrcode.QRCode(
+        version=None,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
+
+    qr_buf = io.BytesIO()
+    qr_img.save(qr_buf, format="PNG")
+    qr_buf.seek(0)
+
+    # --- Build PDF ---
+    pdf_buf = io.BytesIO()
+    page_w, page_h = A4  # 595.28 x 841.89 points
+
+    c = pdf_canvas.Canvas(pdf_buf, pagesize=A4)
+    c.setTitle(f"AR4CT Scan – {scan_id}")
+
+    # Centre the QR code horizontally, place in the upper portion
+    qr_size = 15 * cm
+    qr_x = (page_w - qr_size) / 2
+    qr_y = page_h - 4 * cm - qr_size  # 4 cm from top
+
+    from reportlab.lib.utils import ImageReader
+    c.drawImage(ImageReader(qr_buf), qr_x, qr_y, width=qr_size, height=qr_size)
+
+    # URL text below QR code
+    c.setFont("Helvetica", 9)
+    c.drawCentredString(page_w / 2, qr_y - 0.5 * cm, url)
+
+    # Tool image centred below
+    tool_size = 5 * cm
+    tool_x = (page_w - tool_size) / 2
+    tool_y = qr_y - 1.5 * cm - tool_size
+
+    if TOOL_IMAGE_PATH.exists():
+        c.drawImage(
+            ImageReader(str(TOOL_IMAGE_PATH)),
+            tool_x, tool_y,
+            width=tool_size, height=tool_size,
+            preserveAspectRatio=True,
+            mask="auto",
+        )
+
+    # Instruction text below tool image
+    text_y = tool_y - 0.8 * cm
+    c.setFont("Helvetica-Bold", 11)
+    c.drawCentredString(page_w / 2, text_y, "Cut out the tool marker and tape it to your tool.")
+    text_y -= 0.5 * cm
+    c.setFont("Helvetica", 10)
+    c.drawCentredString(page_w / 2, text_y,
+        "The AR app will show the distance from your tool (the marker)")
+    text_y -= 0.4 * cm
+    c.drawCentredString(page_w / 2, text_y,
+        "to the target point inside the object.")
+
+    c.save()
+    pdf_buf.seek(0)
+
+    return StreamingResponse(
+        pdf_buf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'inline; filename="{scan_id}_print.pdf"'}
+    )
+
+
 # --- Download FBX ---
 
 @app.get("/scans/{scan_id}/fbx")
