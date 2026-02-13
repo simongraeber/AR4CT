@@ -1,4 +1,5 @@
 import os
+import io
 import uuid
 import json
 from datetime import datetime
@@ -6,8 +7,10 @@ from pathlib import Path
 from typing import Optional
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel
+import qrcode
+from qrcode.image.styledpil import StyledPilImage
 
 app = FastAPI(title="AR4CT API", version="1.0.0")
 
@@ -240,6 +243,41 @@ async def get_point(scan_id: str):
         "scan_id": scan_id,
         "point": metadata.get("point")
     }
+
+
+# --- QR Code Image ---
+
+@app.get("/scans/{scan_id}/image.png")
+async def get_qr_code(scan_id: str):
+    """
+    Generate a QR code PNG image that encodes the AR viewer URL for this scan.
+    The QR code points to: https://ar4ct.com/app/{scan_id}
+    """
+    if not scan_exists(scan_id):
+        raise HTTPException(status_code=404, detail="Scan not found")
+
+    url = f"https://ar4ct.com/app/{scan_id}"
+
+    qr = qrcode.QRCode(
+        version=None,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
+
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+
+    return StreamingResponse(
+        buf,
+        media_type="image/png",
+        headers={"Content-Disposition": f'inline; filename="{scan_id}_qr.png"'}
+    )
 
 
 # --- Download FBX ---

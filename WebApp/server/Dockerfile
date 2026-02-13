@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install --no-cache-dir \
     fastapi \
     uvicorn[standard] \
-    python-multipart
+    python-multipart \
+    qrcode[pil]
 
 COPY main.py .
 
