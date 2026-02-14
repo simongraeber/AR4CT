@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      # Mount source for hot-reload during development
+      - ./client:/app
+      - /app/node_modules  # Prevent overwriting node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source for hot-reload during development
+      - ./server/main.py:/app/main.py
+      - ./server/app:/app/app
+      # Persist uploaded files
+      - server_data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+      - RUNPOD_API_KEY=mock_runpod_api_key
+      - RUNPOD_ENDPOINT_ID=mock_endpoint_id
+      - API_BASE_URL=http://localhost:8000
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+volumes:
+  server_data:
