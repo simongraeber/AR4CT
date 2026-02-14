@@ -15,7 +15,7 @@ class ScanMetadata(BaseModel):
     scan_id: str
     created_at: str
     original_filename: Optional[str] = None
-    status: str  # "uploaded", "processing", "completed", "segmented", "error"
+    status: str
     point: Optional[dict] = None
     has_fbx: bool = False
 

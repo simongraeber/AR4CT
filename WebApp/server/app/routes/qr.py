@@ -6,7 +6,6 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 
 import qrcode
-from qrcode.image.styledpil import StyledPilImage  # noqa: F401 – keeps import available
 from PIL import Image, ImageDraw
 
 from app.config import PUBLIC_BASE_URL, TOOL_IMAGE_PATH

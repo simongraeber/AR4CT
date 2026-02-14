@@ -70,7 +70,6 @@ async def upload_scan(file: UploadFile = File(...)):
     }
     save_metadata(scan_id, metadata)
 
-    # Auto-trigger segmentation for CT uploads
     if not metadata["has_fbx"]:
         from app.services.runpod import submit_segmentation_job
         from app.config import API_BASE_URL, DEFAULT_ORGANS

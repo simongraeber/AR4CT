@@ -4,6 +4,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget xz-utils libxi6 libxxf86vm1 libxfixes3 libxrender1 libgl1 \
+    libxkbcommon0 libsm6 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Blender for headless 3D processing (STL → FBX etc.)
@@ -18,7 +19,11 @@ RUN pip install --no-cache-dir \
     python-multipart \
     qrcode[pil] \
     reportlab \
-    httpx
+    httpx \
+    nibabel \
+    scipy \
+    scikit-image \
+    numpy-stl
 
 COPY main.py .
 COPY app/ ./app/

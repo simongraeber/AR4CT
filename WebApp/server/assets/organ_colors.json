@@ -1,0 +1,89 @@
+{
+  "_comment": "Organ material config – RGBA values (0-1). Alpha < 1 enables transparency.",
+  "default": {
+    "color": [0.8, 0.8, 0.8, 0.4],
+    "name": "Default"
+  },
+  "organs": {
+    "liver": {
+      "color": [0.72, 0.24, 0.17, 0.55],
+      "name": "Liver"
+    },
+    "heart": {
+      "color": [0.85, 0.15, 0.15, 0.60],
+      "name": "Heart"
+    },
+    "lung_upper_lobe_left": {
+      "color": [0.55, 0.76, 0.89, 0.40],
+      "name": "Lung Upper Left"
+    },
+    "lung_upper_lobe_right": {
+      "color": [0.40, 0.65, 0.80, 0.40],
+      "name": "Lung Upper Right"
+    },
+    "lung_lower_lobe_left": {
+      "color": [0.35, 0.58, 0.75, 0.40],
+      "name": "Lung Lower Left"
+    },
+    "lung_lower_lobe_right": {
+      "color": [0.28, 0.50, 0.68, 0.40],
+      "name": "Lung Lower Right"
+    },
+    "lung_middle_lobe_right": {
+      "color": [0.45, 0.70, 0.85, 0.40],
+      "name": "Lung Middle Right"
+    },
+    "spleen": {
+      "color": [0.60, 0.20, 0.40, 0.50],
+      "name": "Spleen"
+    },
+    "kidney_left": {
+      "color": [0.80, 0.50, 0.20, 0.50],
+      "name": "Kidney Left"
+    },
+    "kidney_right": {
+      "color": [0.85, 0.55, 0.25, 0.50],
+      "name": "Kidney Right"
+    },
+    "stomach": {
+      "color": [0.90, 0.75, 0.30, 0.45],
+      "name": "Stomach"
+    },
+    "aorta": {
+      "color": [0.90, 0.10, 0.10, 0.65],
+      "name": "Aorta"
+    },
+    "pancreas": {
+      "color": [0.90, 0.70, 0.50, 0.45],
+      "name": "Pancreas"
+    },
+    "gallbladder": {
+      "color": [0.30, 0.65, 0.30, 0.45],
+      "name": "Gallbladder"
+    },
+    "colon": {
+      "color": [0.65, 0.50, 0.35, 0.40],
+      "name": "Colon"
+    },
+    "small_bowel": {
+      "color": [0.75, 0.60, 0.45, 0.35],
+      "name": "Small Bowel"
+    },
+    "urinary_bladder": {
+      "color": [0.90, 0.80, 0.20, 0.45],
+      "name": "Urinary Bladder"
+    },
+    "femur_left": {
+      "color": [0.95, 0.95, 0.88, 0.70],
+      "name": "Femur Left"
+    },
+    "femur_right": {
+      "color": [0.92, 0.92, 0.85, 0.70],
+      "name": "Femur Right"
+    },
+    "body": {
+      "color": [0.87, 0.72, 0.60, 0.15],
+      "name": "Body"
+    }
+  }
+}

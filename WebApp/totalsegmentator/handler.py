@@ -302,6 +302,71 @@ def nifti_to_stl(nifti_path: str, stl_path: str):
     stl_mesh.save(stl_path)
     return stl_path
 
+
+def extract_body_surface(input_nifti_path: str, stl_path: str, hu_threshold: float = -500.0):
+    """
+    Extract the outer body surface from a CT scan and save as STL.
+
+    Uses a Hounsfield-Unit threshold to separate body from air, then
+    applies binary morphological closing to fill small holes before
+    running marching cubes.
+
+    Args:
+        input_nifti_path: Path to the original CT NIfTI file.
+        stl_path: Where to write the resulting STL.
+        hu_threshold: HU value above which voxels are considered "body".
+                      -500 captures skin, fat, muscle, bone, etc.
+    Returns:
+        stl_path on success, None if the mask is empty.
+    """
+    from scipy import ndimage
+
+    print(f"  Extracting body surface (HU > {hu_threshold}) ...")
+    img = nib.load(input_nifti_path)
+    data = img.get_fdata()
+
+    # Threshold to get a binary body mask
+    body_mask = (data > hu_threshold).astype(np.uint8)
+
+    if body_mask.max() == 0:
+        print("  SKIP: body mask is empty")
+        return None
+
+    # Morphological closing to fill internal gaps and smooth the surface
+    struct = ndimage.generate_binary_structure(3, 2)
+    body_mask = ndimage.binary_closing(body_mask, structure=struct, iterations=3).astype(np.uint8)
+
+    # Keep only the largest connected component (the body)
+    labelled, num_features = ndimage.label(body_mask)
+    if num_features > 1:
+        component_sizes = ndimage.sum(body_mask, labelled, range(1, num_features + 1))
+        largest = int(np.argmax(component_sizes)) + 1
+        body_mask = (labelled == largest).astype(np.uint8)
+
+    # Optional: subsample for performance if the volume is very large
+    # (marching cubes on full-res CT can be huge)
+    step = 1
+    total_voxels = body_mask.sum()
+    if total_voxels > 20_000_000:
+        step = 2  # halve resolution
+        print(f"  Body mask has {total_voxels} voxels – using step_size={step}")
+
+    verts, faces, _, _ = measure.marching_cubes(body_mask, level=0.5, step_size=step)
+
+    # Scale by voxel spacing (and step size)
+    spacing = np.array(img.header.get_zooms()[:3]) * step
+    verts = verts * spacing
+
+    stl_mesh = mesh.Mesh(np.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))
+    for i, face in enumerate(faces):
+        for j in range(3):
+            stl_mesh.vectors[i][j] = verts[face[j], :]
+
+    stl_mesh.save(stl_path)
+    size_kb = os.path.getsize(stl_path) / 1024
+    print(f"  Body surface STL: {size_kb:.1f} KB ({len(faces)} faces)")
+    return stl_path
+
 def handler(event):
     """
     RunPod serverless handler for TotalSegmentator.
@@ -456,12 +521,62 @@ def handler(event):
             
             print("TotalSegmentator completed successfully")
             
+            # ── Extract body surface from the original CT scan ──
+            if "body" in organs:
+                body_stl_path = os.path.join(tmp_dir, "body.stl")
+                try:
+                    if extract_body_surface(input_path, body_stl_path):
+                        print("  Body surface extraction succeeded")
+                    else:
+                        print("  Body surface extraction returned empty mask")
+                except Exception as e:
+                    print(f"  Body surface extraction failed: {e}")
+                    import traceback
+                    traceback.print_exc()
+
             # Convert requested organs to STL and upload/collect results
             results = {}
             uploaded_organs = []
             failed_organs = []
             
             for organ in organs:
+                # Body surface is generated from the CT directly, not from TotalSegmentator
+                if organ == "body":
+                    stl_path = os.path.join(tmp_dir, "body.stl")
+                    if os.path.exists(stl_path) and os.path.getsize(stl_path) > 84:
+                        stl_size = os.path.getsize(stl_path)
+                        print(f"  Using body surface STL: {stl_size / 1024:.1f} KB")
+                        if callback_url:
+                            try:
+                                upload_url = f"{callback_url}/stl/body"
+                                print(f"  Uploading body.stl to {upload_url}")
+                                with open(stl_path, "rb") as f:
+                                    upload_response = requests.post(
+                                        upload_url,
+                                        files={"file": ("body.stl", f, "model/stl")},
+                                        timeout=300
+                                    )
+                                if upload_response.status_code == 200:
+                                    print("  \u2713 Uploaded body.stl successfully")
+                                    uploaded_organs.append("body")
+                                    results["body"] = {"status": "uploaded", "size": stl_size}
+                                else:
+                                    print(f"  \u2717 Failed to upload body.stl: {upload_response.status_code}")
+                                    failed_organs.append("body")
+                                    results["body"] = {"status": "upload_failed", "error": upload_response.text}
+                            except Exception as e:
+                                print(f"  \u2717 Error uploading body.stl: {e}")
+                                failed_organs.append("body")
+                                results["body"] = {"status": "upload_error", "error": str(e)}
+                        else:
+                            with open(stl_path, "rb") as f:
+                                results["body"] = base64.b64encode(f.read()).decode("utf-8")
+                            uploaded_organs.append("body")
+                    else:
+                        print("  Body surface STL not available")
+                        failed_organs.append("body")
+                    continue
+
                 nifti_path = os.path.join(output_dir, f"{organ}.nii.gz")
                 if os.path.exists(nifti_path):
                     stl_path = os.path.join(tmp_dir, f"{organ}.stl")

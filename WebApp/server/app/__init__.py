@@ -18,16 +18,10 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Health / info
     @application.get("/")
     async def root():
         return {"message": "AR4CT API", "version": "1.0.0"}
 
-    @application.get("/hello")
-    async def hello():
-        return {"message": "Hello from AR4CT API"}
-
-    # Register all route modules
     for router in all_routers:
         application.include_router(router)
 

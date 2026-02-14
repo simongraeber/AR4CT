@@ -1,4 +1,4 @@
-"""Processing routes – trigger segmentation & check job status."""
+"""Processing routes – trigger segmentation, post-processing & status."""
 
 import logging
 from datetime import datetime
@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/scans", tags=["processing"])
 
+
+# ── Trigger RunPod segmentation ──────────────────────────────────────────
 
 @router.post("/{scan_id}/process")
 async def start_processing(scan_id: str):
@@ -31,8 +33,7 @@ async def start_processing(scan_id: str):
     if not metadata:
         raise HTTPException(status_code=404, detail="Scan metadata not found")
 
-    # Don't re-trigger if already processing or completed
-    if metadata.get("status") in ("processing", "segmented", "completed", "post_processed"):
+    if metadata.get("status") in ("processing", "segmented", "post_processing", "completed"):
         return {
             "scan_id": scan_id,
             "status": metadata["status"],
@@ -40,7 +41,6 @@ async def start_processing(scan_id: str):
             "message": f"Scan is already in status '{metadata['status']}'",
         }
 
-    # Build URLs that RunPod will use
     ct_url = f"{API_BASE_URL}/scans/{scan_id}/ct"
     callback_url = f"{API_BASE_URL}/scans/{scan_id}"
 
@@ -51,9 +51,8 @@ async def start_processing(scan_id: str):
     )
 
     if "error" in result:
-        raise HTTPException(status_code=502, detail=result["error"])
+        raise HTTPException(status_code=503, detail=result["error"])
 
-    # Persist job info
     metadata["status"] = "processing"
     metadata["runpod_job_id"] = result["job_id"]
     metadata["processing_started_at"] = datetime.utcnow().isoformat() + "Z"
@@ -67,6 +66,41 @@ async def start_processing(scan_id: str):
     }
 
 
+# ── Trigger post-processing independently ────────────────────────────────
+
+@router.post("/{scan_id}/postprocess")
+async def start_post_processing(scan_id: str):
+    """
+    Trigger the STL → FBX post-processing pipeline.
+
+    Can be called at any time – it does NOT require RunPod to have just
+    completed.  As long as there are STL files in the scan's stl/ directory,
+    Blender will convert them to an FBX.
+    """
+    if not scan_exists(scan_id):
+        raise HTTPException(status_code=404, detail="Scan not found")
+
+    metadata = load_metadata(scan_id)
+    if not metadata:
+        raise HTTPException(status_code=404, detail="Scan metadata not found")
+
+    if metadata.get("status") == "post_processing":
+        return {
+            "scan_id": scan_id,
+            "status": "post_processing",
+            "message": "Post-processing is already running",
+        }
+
+    result = await run_post_processing(scan_id)
+
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    return result
+
+
+# ── Poll status ──────────────────────────────────────────────────────────
+
 @router.get("/{scan_id}/process/status")
 async def get_processing_status(scan_id: str):
     """
@@ -74,6 +108,7 @@ async def get_processing_status(scan_id: str):
 
     If a RunPod job_id exists and local status is still 'processing',
     we poll RunPod for an update and sync the metadata accordingly.
+    When segmentation completes, post-processing is triggered automatically.
     """
     if not scan_exists(scan_id):
         raise HTTPException(status_code=404, detail="Scan not found")
@@ -84,7 +119,28 @@ async def get_processing_status(scan_id: str):
 
     runpod_job_id = metadata.get("runpod_job_id")
 
-    # If we have a pending job, poll RunPod
+    # ── Auto-retry: if stuck in "uploaded" with no RunPod job, kick off
+    #    segmentation automatically so the user doesn't have to do it manually.
+    if metadata.get("status") == "uploaded" and not runpod_job_id:
+        try:
+            ct_url = f"{API_BASE_URL}/scans/{scan_id}/ct"
+            callback_url = f"{API_BASE_URL}/scans/{scan_id}"
+            result = await submit_segmentation_job(
+                file_url=ct_url,
+                organs=DEFAULT_ORGANS,
+                callback_url=callback_url,
+            )
+            if "job_id" in result:
+                metadata["status"] = "processing"
+                metadata["runpod_job_id"] = result["job_id"]
+                from datetime import datetime as _dt
+                metadata["processing_started_at"] = _dt.utcnow().isoformat() + "Z"
+                save_metadata(scan_id, metadata)
+                runpod_job_id = result["job_id"]
+                logger.info("Auto-triggered segmentation for stuck scan %s", scan_id)
+        except Exception:
+            logger.exception("Auto-trigger segmentation failed for scan %s", scan_id)
+
     if runpod_job_id and metadata.get("status") == "processing":
         rp_status = await poll_job_status(runpod_job_id)
         rp_state = rp_status.get("status", "UNKNOWN")
@@ -97,9 +153,9 @@ async def get_processing_status(scan_id: str):
             metadata["organs_processed"] = output.get("organs_processed", [])
             save_metadata(scan_id, metadata)
 
-            # Fire post-processing (non-blocking intent, but awaited for now)
             try:
                 await run_post_processing(scan_id)
+                metadata = load_metadata(scan_id)
             except Exception:
                 logger.exception("Post-processing failed for scan %s", scan_id)
 
@@ -113,5 +169,7 @@ async def get_processing_status(scan_id: str):
         "status": metadata.get("status"),
         "runpod_job_id": runpod_job_id,
         "organs_processed": metadata.get("organs_processed", []),
+        "has_fbx": metadata.get("has_fbx", False),
+        "fbx_size": metadata.get("fbx_size"),
         "error": metadata.get("processing_error"),
     }
