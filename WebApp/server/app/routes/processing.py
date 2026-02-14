@@ -66,6 +66,39 @@ async def start_processing(scan_id: str):
     }
 
 
+# ── Reset scan to allow re-processing ────────────────────────────────────
+
+@router.post("/{scan_id}/reset")
+async def reset_scan(scan_id: str):
+    """
+    Reset a scan back to 'uploaded' status so it can be re-processed.
+    Clears RunPod job info and processing errors.
+    """
+    if not scan_exists(scan_id):
+        raise HTTPException(status_code=404, detail="Scan not found")
+
+    metadata = load_metadata(scan_id)
+    if not metadata:
+        raise HTTPException(status_code=404, detail="Scan metadata not found")
+
+    old_status = metadata.get("status")
+    metadata["status"] = "uploaded"
+    metadata.pop("runpod_job_id", None)
+    metadata.pop("processing_started_at", None)
+    metadata.pop("processing_completed_at", None)
+    metadata.pop("processing_error", None)
+    metadata.pop("organs_processed", None)
+    save_metadata(scan_id, metadata)
+
+    logger.info("Reset scan %s from '%s' to 'uploaded'", scan_id, old_status)
+    return {
+        "scan_id": scan_id,
+        "status": "uploaded",
+        "previous_status": old_status,
+        "message": "Scan reset to 'uploaded' – ready for re-processing",
+    }
+
+
 # ── Trigger post-processing independently ────────────────────────────────
 
 @router.post("/{scan_id}/postprocess")
@@ -148,6 +181,8 @@ async def get_processing_status(scan_id: str):
         if rp_state == "COMPLETED":
             metadata["status"] = "segmented"
             metadata["processing_completed_at"] = datetime.utcnow().isoformat() + "Z"
+            # Clear errors from any previous failed attempt
+            metadata.pop("processing_error", None)
 
             output = rp_status.get("output", {})
             metadata["organs_processed"] = output.get("organs_processed", [])
@@ -170,6 +205,7 @@ async def get_processing_status(scan_id: str):
         "runpod_job_id": runpod_job_id,
         "organs_processed": metadata.get("organs_processed", []),
         "has_fbx": metadata.get("has_fbx", False),
+        "has_body": metadata.get("has_body", False),
         "fbx_size": metadata.get("fbx_size"),
         "error": metadata.get("processing_error"),
     }

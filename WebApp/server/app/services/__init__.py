@@ -169,12 +169,19 @@ async def run_post_processing(scan_id: str) -> dict:
     save_metadata(scan_id, metadata)
 
     # Step 0 – extract body surface from CT if body.stl is missing
+    body_included = False
     try:
         body_result = await _extract_body_surface(scan_id)
         if body_result:
             logger.info("Body surface available: %s", body_result)
+            body_included = True
         else:
-            logger.info("Body surface not available (CT missing or extraction failed)")
+            logger.warning(
+                "Body surface NOT available for scan %s – "
+                "no ct_original_* file found in scan directory. "
+                "Upload the CT file via POST /scans/%s/ct to enable body extraction.",
+                scan_id, scan_id,
+            )
     except Exception as exc:
         # Non-fatal – continue without the body surface
         logger.warning("Body surface extraction error for %s: %s", scan_id, exc)
@@ -202,14 +209,23 @@ async def run_post_processing(scan_id: str) -> dict:
 
     metadata["status"] = "completed"
     metadata["has_fbx"] = True
+    metadata["has_body"] = body_included
     metadata["fbx_size"] = fbx_path.stat().st_size
+    # Clear any stale error from previous failed attempts
+    metadata.pop("processing_error", None)
     save_metadata(scan_id, metadata)
 
     summary = {
         "scan_id": scan_id,
         "status": "completed",
         "stl_count": len(stl_files),
+        "has_body": body_included,
         "fbx_size": metadata["fbx_size"],
     }
+    if not body_included:
+        summary["warning"] = (
+            "Body surface not included – CT file not found in scan directory. "
+            "Upload CT via POST /scans/{scan_id}/ct and re-run post-processing."
+        )
     logger.info("Post-processing finished for scan %s: %s", scan_id, summary)
     return summary

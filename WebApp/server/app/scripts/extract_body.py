@@ -39,6 +39,9 @@ def load_image_volume(path: str, hu_threshold: float) -> tuple[np.ndarray, tuple
         # Calculate spacing (x, y, z)
         spacing = img.GetSpacing()
         
+        # Cast to Float32 so thresholding works for unsigned pixel types (e.g. MHD)
+        img = sitk.Cast(img, sitk.sitkFloat32)
+        
         # Threshold in SimpleITK (returns uint8 image 0/1)
         # We want > hu_threshold. So (hu_threshold, infinity).
         # Note: SimpleITK uses [lower, upper].
@@ -150,9 +153,9 @@ def extract_body_surface(
 
     verts, faces, _, _ = measure.marching_cubes(body_mask, level=0.5, step_size=step)
 
-    # Scale by voxel spacing (and step size)
-    # Spacing is already (x, y, z) from load_image_volume
-    spacing = np.array(spacing) * step
+    # Transform voxel coords → physical coords (mm)
+    # marching_cubes with step_size already returns coords in original voxel space
+    spacing = np.array(spacing)
     verts = verts * spacing
 
     # Build STL mesh

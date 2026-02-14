@@ -290,8 +290,10 @@ def nifti_to_stl(nifti_path: str, stl_path: str):
     # Generate mesh using marching cubes
     verts, faces, _, _ = measure.marching_cubes(data, level=0.5)
     
-    # Apply voxel spacing for correct dimensions
-    verts = verts * img.header.get_zooms()[:3]
+    # Transform voxel coords → physical coords (mm)
+    spacing = np.array(img.header.get_zooms()[:3])
+    origin = np.array(img.affine[:3, 3])
+    verts = verts * spacing + origin
     
     # Create STL mesh
     stl_mesh = mesh.Mesh(np.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))
@@ -353,9 +355,11 @@ def extract_body_surface(input_nifti_path: str, stl_path: str, hu_threshold: flo
 
     verts, faces, _, _ = measure.marching_cubes(body_mask, level=0.5, step_size=step)
 
-    # Scale by voxel spacing (and step size)
-    spacing = np.array(img.header.get_zooms()[:3]) * step
-    verts = verts * spacing
+    # Transform voxel coords → physical coords (mm)
+    # marching_cubes with step_size already returns coords in original voxel space
+    spacing = np.array(img.header.get_zooms()[:3])
+    origin = np.array(img.affine[:3, 3])
+    verts = verts * spacing + origin
 
     stl_mesh = mesh.Mesh(np.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))
     for i, face in enumerate(faces):
@@ -510,7 +514,7 @@ def handler(event):
                 output_dir=output_dir,
                 fast=fast_mode,
                 device=device,
-                timeout=1800  # 30 minutes max
+                timeout=7200  # 2 hours – large CTs with all 117 organs need ~60-90 min
             )
             
             if not success:

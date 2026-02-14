@@ -195,12 +195,6 @@ def main() -> None:
     if imported_count == 0:
         sys.exit(1)
 
-    for obj in bpy.data.objects:
-        if obj.type == "MESH":
-            obj.scale *= 0.001
-    bpy.ops.object.select_all(action="SELECT")
-    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-
     center_all_objects()
 
     bpy.ops.object.select_all(action="SELECT")

@@ -1,78 +1,324 @@
 {
-  "_comment": "Organ material config – RGBA values (0-1). Alpha < 1 enables transparency.",
+  "_comment": "Organ material config – RGBA values (0-1). Alpha < 1 enables transparency. Covers all 117 TotalSegmentator v2 'total' classes + custom 'body' surface.",
   "default": {
     "color": [0.8, 0.8, 0.8, 0.4],
     "name": "Default"
   },
   "organs": {
-    "liver": {
-      "color": [0.72, 0.24, 0.17, 0.55],
-      "name": "Liver"
+    "body": {
+      "color": [0.87, 0.72, 0.60, 0.15],
+      "name": "Body"
     },
-    "heart": {
-      "color": [0.85, 0.15, 0.15, 0.60],
-      "name": "Heart"
-    },
-    "lung_upper_lobe_left": {
-      "color": [0.55, 0.76, 0.89, 0.40],
-      "name": "Lung Upper Left"
-    },
-    "lung_upper_lobe_right": {
-      "color": [0.40, 0.65, 0.80, 0.40],
-      "name": "Lung Upper Right"
-    },
-    "lung_lower_lobe_left": {
-      "color": [0.35, 0.58, 0.75, 0.40],
-      "name": "Lung Lower Left"
-    },
-    "lung_lower_lobe_right": {
-      "color": [0.28, 0.50, 0.68, 0.40],
-      "name": "Lung Lower Right"
-    },
-    "lung_middle_lobe_right": {
-      "color": [0.45, 0.70, 0.85, 0.40],
-      "name": "Lung Middle Right"
-    },
+
+    "_comment_organs": "── Abdominal / pelvic organs ──",
     "spleen": {
       "color": [0.60, 0.20, 0.40, 0.50],
       "name": "Spleen"
-    },
-    "kidney_left": {
-      "color": [0.80, 0.50, 0.20, 0.50],
-      "name": "Kidney Left"
     },
     "kidney_right": {
       "color": [0.85, 0.55, 0.25, 0.50],
       "name": "Kidney Right"
     },
-    "stomach": {
-      "color": [0.90, 0.75, 0.30, 0.45],
-      "name": "Stomach"
-    },
-    "aorta": {
-      "color": [0.90, 0.10, 0.10, 0.65],
-      "name": "Aorta"
-    },
-    "pancreas": {
-      "color": [0.90, 0.70, 0.50, 0.45],
-      "name": "Pancreas"
+    "kidney_left": {
+      "color": [0.80, 0.50, 0.20, 0.50],
+      "name": "Kidney Left"
     },
     "gallbladder": {
       "color": [0.30, 0.65, 0.30, 0.45],
       "name": "Gallbladder"
     },
-    "colon": {
-      "color": [0.65, 0.50, 0.35, 0.40],
-      "name": "Colon"
+    "liver": {
+      "color": [0.72, 0.24, 0.17, 0.55],
+      "name": "Liver"
+    },
+    "stomach": {
+      "color": [0.90, 0.75, 0.30, 0.45],
+      "name": "Stomach"
+    },
+    "pancreas": {
+      "color": [0.90, 0.70, 0.50, 0.45],
+      "name": "Pancreas"
+    },
+    "adrenal_gland_right": {
+      "color": [0.90, 0.65, 0.20, 0.50],
+      "name": "Adrenal Gland Right"
+    },
+    "adrenal_gland_left": {
+      "color": [0.88, 0.60, 0.18, 0.50],
+      "name": "Adrenal Gland Left"
+    },
+    "esophagus": {
+      "color": [0.80, 0.55, 0.55, 0.50],
+      "name": "Esophagus"
     },
     "small_bowel": {
       "color": [0.75, 0.60, 0.45, 0.35],
       "name": "Small Bowel"
     },
+    "duodenum": {
+      "color": [0.80, 0.65, 0.40, 0.40],
+      "name": "Duodenum"
+    },
+    "colon": {
+      "color": [0.65, 0.50, 0.35, 0.40],
+      "name": "Colon"
+    },
     "urinary_bladder": {
       "color": [0.90, 0.80, 0.20, 0.45],
       "name": "Urinary Bladder"
     },
+    "prostate": {
+      "color": [0.75, 0.55, 0.40, 0.50],
+      "name": "Prostate"
+    },
+    "kidney_cyst_left": {
+      "color": [0.70, 0.45, 0.15, 0.40],
+      "name": "Kidney Cyst Left"
+    },
+    "kidney_cyst_right": {
+      "color": [0.75, 0.48, 0.18, 0.40],
+      "name": "Kidney Cyst Right"
+    },
+
+    "_comment_lungs": "── Lung lobes ──",
+    "lung_upper_lobe_left": {
+      "color": [0.55, 0.76, 0.89, 0.40],
+      "name": "Lung Upper Left"
+    },
+    "lung_lower_lobe_left": {
+      "color": [0.35, 0.58, 0.75, 0.40],
+      "name": "Lung Lower Left"
+    },
+    "lung_upper_lobe_right": {
+      "color": [0.40, 0.65, 0.80, 0.40],
+      "name": "Lung Upper Right"
+    },
+    "lung_middle_lobe_right": {
+      "color": [0.45, 0.70, 0.85, 0.40],
+      "name": "Lung Middle Right"
+    },
+    "lung_lower_lobe_right": {
+      "color": [0.28, 0.50, 0.68, 0.40],
+      "name": "Lung Lower Right"
+    },
+
+    "_comment_airway": "── Airway / neck ──",
+    "trachea": {
+      "color": [0.55, 0.80, 0.90, 0.50],
+      "name": "Trachea"
+    },
+    "thyroid_gland": {
+      "color": [0.80, 0.30, 0.50, 0.55],
+      "name": "Thyroid Gland"
+    },
+
+    "_comment_heart": "── Heart & great vessels ──",
+    "heart": {
+      "color": [0.85, 0.15, 0.15, 0.60],
+      "name": "Heart"
+    },
+    "aorta": {
+      "color": [0.90, 0.10, 0.10, 0.65],
+      "name": "Aorta"
+    },
+    "pulmonary_vein": {
+      "color": [0.65, 0.20, 0.25, 0.55],
+      "name": "Pulmonary Vein"
+    },
+    "brachiocephalic_trunk": {
+      "color": [0.85, 0.20, 0.15, 0.55],
+      "name": "Brachiocephalic Trunk"
+    },
+    "subclavian_artery_right": {
+      "color": [0.88, 0.18, 0.18, 0.50],
+      "name": "Subclavian Artery Right"
+    },
+    "subclavian_artery_left": {
+      "color": [0.86, 0.16, 0.16, 0.50],
+      "name": "Subclavian Artery Left"
+    },
+    "common_carotid_artery_right": {
+      "color": [0.90, 0.22, 0.12, 0.50],
+      "name": "Common Carotid Artery Right"
+    },
+    "common_carotid_artery_left": {
+      "color": [0.88, 0.20, 0.10, 0.50],
+      "name": "Common Carotid Artery Left"
+    },
+    "brachiocephalic_vein_left": {
+      "color": [0.25, 0.30, 0.70, 0.50],
+      "name": "Brachiocephalic Vein Left"
+    },
+    "brachiocephalic_vein_right": {
+      "color": [0.28, 0.33, 0.73, 0.50],
+      "name": "Brachiocephalic Vein Right"
+    },
+    "atrial_appendage_left": {
+      "color": [0.80, 0.20, 0.25, 0.55],
+      "name": "Atrial Appendage Left"
+    },
+    "superior_vena_cava": {
+      "color": [0.30, 0.35, 0.75, 0.55],
+      "name": "Superior Vena Cava"
+    },
+    "inferior_vena_cava": {
+      "color": [0.25, 0.30, 0.68, 0.55],
+      "name": "Inferior Vena Cava"
+    },
+    "portal_vein_and_splenic_vein": {
+      "color": [0.35, 0.25, 0.65, 0.50],
+      "name": "Portal & Splenic Vein"
+    },
+    "iliac_artery_left": {
+      "color": [0.85, 0.25, 0.20, 0.50],
+      "name": "Iliac Artery Left"
+    },
+    "iliac_artery_right": {
+      "color": [0.87, 0.27, 0.22, 0.50],
+      "name": "Iliac Artery Right"
+    },
+    "iliac_vena_left": {
+      "color": [0.30, 0.28, 0.65, 0.50],
+      "name": "Iliac Vein Left"
+    },
+    "iliac_vena_right": {
+      "color": [0.33, 0.30, 0.68, 0.50],
+      "name": "Iliac Vein Right"
+    },
+
+    "_comment_vertebrae": "── Vertebrae ──",
+    "sacrum": {
+      "color": [0.92, 0.90, 0.82, 0.65],
+      "name": "Sacrum"
+    },
+    "vertebrae_S1": {
+      "color": [0.90, 0.88, 0.80, 0.65],
+      "name": "Vertebra S1"
+    },
+    "vertebrae_L5": {
+      "color": [0.93, 0.91, 0.83, 0.65],
+      "name": "Vertebra L5"
+    },
+    "vertebrae_L4": {
+      "color": [0.91, 0.89, 0.81, 0.65],
+      "name": "Vertebra L4"
+    },
+    "vertebrae_L3": {
+      "color": [0.93, 0.91, 0.83, 0.65],
+      "name": "Vertebra L3"
+    },
+    "vertebrae_L2": {
+      "color": [0.91, 0.89, 0.81, 0.65],
+      "name": "Vertebra L2"
+    },
+    "vertebrae_L1": {
+      "color": [0.93, 0.91, 0.83, 0.65],
+      "name": "Vertebra L1"
+    },
+    "vertebrae_T12": {
+      "color": [0.90, 0.88, 0.80, 0.65],
+      "name": "Vertebra T12"
+    },
+    "vertebrae_T11": {
+      "color": [0.92, 0.90, 0.82, 0.65],
+      "name": "Vertebra T11"
+    },
+    "vertebrae_T10": {
+      "color": [0.90, 0.88, 0.80, 0.65],
+      "name": "Vertebra T10"
+    },
+    "vertebrae_T9": {
+      "color": [0.92, 0.90, 0.82, 0.65],
+      "name": "Vertebra T9"
+    },
+    "vertebrae_T8": {
+      "color": [0.90, 0.88, 0.80, 0.65],
+      "name": "Vertebra T8"
+    },
+    "vertebrae_T7": {
+      "color": [0.92, 0.90, 0.82, 0.65],
+      "name": "Vertebra T7"
+    },
+    "vertebrae_T6": {
+      "color": [0.90, 0.88, 0.80, 0.65],
+      "name": "Vertebra T6"
+    },
+    "vertebrae_T5": {
+      "color": [0.92, 0.90, 0.82, 0.65],
+      "name": "Vertebra T5"
+    },
+    "vertebrae_T4": {
+      "color": [0.90, 0.88, 0.80, 0.65],
+      "name": "Vertebra T4"
+    },
+    "vertebrae_T3": {
+      "color": [0.92, 0.90, 0.82, 0.65],
+      "name": "Vertebra T3"
+    },
+    "vertebrae_T2": {
+      "color": [0.90, 0.88, 0.80, 0.65],
+      "name": "Vertebra T2"
+    },
+    "vertebrae_T1": {
+      "color": [0.92, 0.90, 0.82, 0.65],
+      "name": "Vertebra T1"
+    },
+    "vertebrae_C7": {
+      "color": [0.90, 0.88, 0.82, 0.65],
+      "name": "Vertebra C7"
+    },
+    "vertebrae_C6": {
+      "color": [0.92, 0.90, 0.84, 0.65],
+      "name": "Vertebra C6"
+    },
+    "vertebrae_C5": {
+      "color": [0.90, 0.88, 0.82, 0.65],
+      "name": "Vertebra C5"
+    },
+    "vertebrae_C4": {
+      "color": [0.92, 0.90, 0.84, 0.65],
+      "name": "Vertebra C4"
+    },
+    "vertebrae_C3": {
+      "color": [0.90, 0.88, 0.82, 0.65],
+      "name": "Vertebra C3"
+    },
+    "vertebrae_C2": {
+      "color": [0.92, 0.90, 0.84, 0.65],
+      "name": "Vertebra C2"
+    },
+    "vertebrae_C1": {
+      "color": [0.90, 0.88, 0.82, 0.65],
+      "name": "Vertebra C1"
+    },
+
+    "_comment_upper_limb": "── Upper limb / shoulder bones ──",
+    "humerus_left": {
+      "color": [0.94, 0.94, 0.87, 0.70],
+      "name": "Humerus Left"
+    },
+    "humerus_right": {
+      "color": [0.92, 0.92, 0.85, 0.70],
+      "name": "Humerus Right"
+    },
+    "scapula_left": {
+      "color": [0.93, 0.93, 0.86, 0.70],
+      "name": "Scapula Left"
+    },
+    "scapula_right": {
+      "color": [0.91, 0.91, 0.84, 0.70],
+      "name": "Scapula Right"
+    },
+    "clavicula_left": {
+      "color": [0.94, 0.94, 0.88, 0.70],
+      "name": "Clavicula Left"
+    },
+    "clavicula_right": {
+      "color": [0.92, 0.92, 0.86, 0.70],
+      "name": "Clavicula Right"
+    },
+
+    "_comment_lower_limb": "── Lower limb / hip bones ──",
     "femur_left": {
       "color": [0.95, 0.95, 0.88, 0.70],
       "name": "Femur Left"
@@ -81,9 +327,109 @@
       "color": [0.92, 0.92, 0.85, 0.70],
       "name": "Femur Right"
     },
-    "body": {
-      "color": [0.87, 0.72, 0.60, 0.15],
-      "name": "Body"
+    "hip_left": {
+      "color": [0.93, 0.93, 0.86, 0.70],
+      "name": "Hip Left"
+    },
+    "hip_right": {
+      "color": [0.91, 0.91, 0.84, 0.70],
+      "name": "Hip Right"
+    },
+
+    "_comment_ribs": "── Ribs & sternum ──",
+    "rib_left_1":  { "color": [0.93, 0.92, 0.85, 0.65], "name": "Rib Left 1" },
+    "rib_left_2":  { "color": [0.91, 0.90, 0.83, 0.65], "name": "Rib Left 2" },
+    "rib_left_3":  { "color": [0.93, 0.92, 0.85, 0.65], "name": "Rib Left 3" },
+    "rib_left_4":  { "color": [0.91, 0.90, 0.83, 0.65], "name": "Rib Left 4" },
+    "rib_left_5":  { "color": [0.93, 0.92, 0.85, 0.65], "name": "Rib Left 5" },
+    "rib_left_6":  { "color": [0.91, 0.90, 0.83, 0.65], "name": "Rib Left 6" },
+    "rib_left_7":  { "color": [0.93, 0.92, 0.85, 0.65], "name": "Rib Left 7" },
+    "rib_left_8":  { "color": [0.91, 0.90, 0.83, 0.65], "name": "Rib Left 8" },
+    "rib_left_9":  { "color": [0.93, 0.92, 0.85, 0.65], "name": "Rib Left 9" },
+    "rib_left_10": { "color": [0.91, 0.90, 0.83, 0.65], "name": "Rib Left 10" },
+    "rib_left_11": { "color": [0.93, 0.92, 0.85, 0.65], "name": "Rib Left 11" },
+    "rib_left_12": { "color": [0.91, 0.90, 0.83, 0.65], "name": "Rib Left 12" },
+    "rib_right_1":  { "color": [0.92, 0.91, 0.84, 0.65], "name": "Rib Right 1" },
+    "rib_right_2":  { "color": [0.90, 0.89, 0.82, 0.65], "name": "Rib Right 2" },
+    "rib_right_3":  { "color": [0.92, 0.91, 0.84, 0.65], "name": "Rib Right 3" },
+    "rib_right_4":  { "color": [0.90, 0.89, 0.82, 0.65], "name": "Rib Right 4" },
+    "rib_right_5":  { "color": [0.92, 0.91, 0.84, 0.65], "name": "Rib Right 5" },
+    "rib_right_6":  { "color": [0.90, 0.89, 0.82, 0.65], "name": "Rib Right 6" },
+    "rib_right_7":  { "color": [0.92, 0.91, 0.84, 0.65], "name": "Rib Right 7" },
+    "rib_right_8":  { "color": [0.90, 0.89, 0.82, 0.65], "name": "Rib Right 8" },
+    "rib_right_9":  { "color": [0.92, 0.91, 0.84, 0.65], "name": "Rib Right 9" },
+    "rib_right_10": { "color": [0.90, 0.89, 0.82, 0.65], "name": "Rib Right 10" },
+    "rib_right_11": { "color": [0.92, 0.91, 0.84, 0.65], "name": "Rib Right 11" },
+    "rib_right_12": { "color": [0.90, 0.89, 0.82, 0.65], "name": "Rib Right 12" },
+    "sternum": {
+      "color": [0.94, 0.93, 0.87, 0.70],
+      "name": "Sternum"
+    },
+    "costal_cartilages": {
+      "color": [0.85, 0.85, 0.80, 0.55],
+      "name": "Costal Cartilages"
+    },
+
+    "_comment_muscles": "── Muscles ──",
+    "gluteus_maximus_left": {
+      "color": [0.70, 0.40, 0.35, 0.45],
+      "name": "Gluteus Maximus Left"
+    },
+    "gluteus_maximus_right": {
+      "color": [0.72, 0.42, 0.37, 0.45],
+      "name": "Gluteus Maximus Right"
+    },
+    "gluteus_medius_left": {
+      "color": [0.68, 0.38, 0.33, 0.45],
+      "name": "Gluteus Medius Left"
+    },
+    "gluteus_medius_right": {
+      "color": [0.70, 0.40, 0.35, 0.45],
+      "name": "Gluteus Medius Right"
+    },
+    "gluteus_minimus_left": {
+      "color": [0.66, 0.36, 0.31, 0.45],
+      "name": "Gluteus Minimus Left"
+    },
+    "gluteus_minimus_right": {
+      "color": [0.68, 0.38, 0.33, 0.45],
+      "name": "Gluteus Minimus Right"
+    },
+    "autochthon_left": {
+      "color": [0.65, 0.35, 0.30, 0.45],
+      "name": "Autochthon Left"
+    },
+    "autochthon_right": {
+      "color": [0.67, 0.37, 0.32, 0.45],
+      "name": "Autochthon Right"
+    },
+    "iliopsoas_left": {
+      "color": [0.72, 0.42, 0.35, 0.45],
+      "name": "Iliopsoas Left"
+    },
+    "iliopsoas_right": {
+      "color": [0.74, 0.44, 0.37, 0.45],
+      "name": "Iliopsoas Right"
+    },
+
+    "_comment_cns": "── CNS / skull ──",
+    "spinal_cord": {
+      "color": [0.90, 0.85, 0.55, 0.55],
+      "name": "Spinal Cord"
+    },
+    "brain": {
+      "color": [0.85, 0.70, 0.75, 0.50],
+      "name": "Brain"
+    },
+    "skull": {
+      "color": [0.95, 0.95, 0.90, 0.70],
+      "name": "Skull"
+    },
+
+    "_comment_face": "── Face ──",
+    "face": {
+      "color": [0.88, 0.75, 0.65, 0.40],
+      "name": "Face"
     }
   }
 }
