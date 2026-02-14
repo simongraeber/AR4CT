@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 941a03ac5617d224fbaf4d6e7b3d5f0f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157548
+  packageName: TriLib 2 - Model Loading Package
+  packageVersion: 2.5.9
+  assetPath: Assets/TriLib/TriLibCore/Plugins/TriLibCore.Fbx/FBXModel.cs
+  uploadId: 842000

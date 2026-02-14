@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: e409b9162f60cac449a4cd8addacf60a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157548
+  packageName: TriLib 2 - Model Loading Package
+  packageVersion: 2.5.9
+  assetPath: Assets/TriLib/TriLibCore/Plugins/SharpZipLib/Crc32.cs
+  uploadId: 842000

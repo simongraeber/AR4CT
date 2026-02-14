@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 99ab0125cdb6d7f4484c8a37a931307a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157548
+  packageName: TriLib 2 - Model Loading Package
+  packageVersion: 2.5.9
+  assetPath: Assets/TriLib/TriLibCore/Plugins/TriLibCore.Fbx/FBXProcessorGeometry.cs
+  uploadId: 842000

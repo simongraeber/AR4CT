@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6af1de7d724cb3149b7d22ac580fa5a0
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157548
+  packageName: TriLib 2 - Model Loading Package
+  packageVersion: 2.5.9
+  assetPath: Assets/TriLib/TriLibCore/Plugins/TriLibCore/TriLibCore.Source.asmdef
+  uploadId: 842000

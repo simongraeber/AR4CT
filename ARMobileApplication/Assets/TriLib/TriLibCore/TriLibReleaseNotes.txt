@@ -1,0 +1,4 @@
+﻿2.5.9:
+Changelog:
+-Added TriLib managed libraries source code (Source Mode) under "Assets/TriLib/TriLibCore/Plugins". This mode avoids ABI issues caused by frequent Unity 6+ changes and is now the recommended setup.
+-Fixed Avatar Loader scene.

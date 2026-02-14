@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 3aa94e164c3ae6f40991a3a01e019ebb
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157548
+  packageName: TriLib 2 - Model Loading Package
+  packageVersion: 2.5.9
+  assetPath: Assets/TriLib/TriLibCore/Plugins/ThreeMf/IThreeMfPropertyResource.cs
+  uploadId: 842000

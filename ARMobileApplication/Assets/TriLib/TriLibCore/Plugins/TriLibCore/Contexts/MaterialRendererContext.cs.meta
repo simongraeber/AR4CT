@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 08a56610ebbc8aa4395c3f581120cf89
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157548
+  packageName: TriLib 2 - Model Loading Package
+  packageVersion: 2.5.9
+  assetPath: Assets/TriLib/TriLibCore/Plugins/TriLibCore/Contexts/MaterialRendererContext.cs
+  uploadId: 842000

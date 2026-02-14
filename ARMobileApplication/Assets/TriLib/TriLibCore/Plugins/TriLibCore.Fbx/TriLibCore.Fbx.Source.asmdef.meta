@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b9c58988a54d32f44b0b8d5c1e2e6a02
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157548
+  packageName: TriLib 2 - Model Loading Package
+  packageVersion: 2.5.9
+  assetPath: Assets/TriLib/TriLibCore/Plugins/TriLibCore.Fbx/TriLibCore.Fbx.Source.asmdef
+  uploadId: 842000

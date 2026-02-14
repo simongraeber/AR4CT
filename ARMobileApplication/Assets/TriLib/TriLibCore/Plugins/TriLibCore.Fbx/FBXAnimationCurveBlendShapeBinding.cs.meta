@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: ee1f2894e011bf04f8e4a4458c1758c1
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157548
+  packageName: TriLib 2 - Model Loading Package
+  packageVersion: 2.5.9
+  assetPath: Assets/TriLib/TriLibCore/Plugins/TriLibCore.Fbx/FBXAnimationCurveBlendShapeBinding.cs
+  uploadId: 842000

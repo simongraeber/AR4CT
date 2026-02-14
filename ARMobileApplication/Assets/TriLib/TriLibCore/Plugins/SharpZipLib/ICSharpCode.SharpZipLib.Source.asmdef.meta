@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 57ea556f5b6da1f45b2f4733dd5eae3f
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157548
+  packageName: TriLib 2 - Model Loading Package
+  packageVersion: 2.5.9
+  assetPath: Assets/TriLib/TriLibCore/Plugins/SharpZipLib/ICSharpCode.SharpZipLib.Source.asmdef
+  uploadId: 842000

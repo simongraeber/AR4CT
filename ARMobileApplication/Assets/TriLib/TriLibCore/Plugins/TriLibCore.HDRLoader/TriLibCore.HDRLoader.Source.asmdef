@@ -1,0 +1,16 @@
+{
+    "name": "TriLibCore.HDRLoader.Source",
+    "rootNamespace": "",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "TRILIB_USE_SOURCE_LIBS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

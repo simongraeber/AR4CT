@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: d34f18171d083bd478a60c3db7488d55
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157548
+  packageName: TriLib 2 - Model Loading Package
+  packageVersion: 2.5.9
+  assetPath: Assets/TriLib/TriLibCore/Plugins/SharpZipLib/StreamUnsupportedException.cs
+  uploadId: 842000

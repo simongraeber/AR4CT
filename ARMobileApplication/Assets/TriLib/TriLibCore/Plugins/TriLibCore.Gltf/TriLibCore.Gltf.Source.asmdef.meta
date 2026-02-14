@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 30133c4db9981fd4fbe905570b892b2c
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 157548
+  packageName: TriLib 2 - Model Loading Package
+  packageVersion: 2.5.9
+  assetPath: Assets/TriLib/TriLibCore/Plugins/TriLibCore.Gltf/TriLibCore.Gltf.Source.asmdef
+  uploadId: 842000

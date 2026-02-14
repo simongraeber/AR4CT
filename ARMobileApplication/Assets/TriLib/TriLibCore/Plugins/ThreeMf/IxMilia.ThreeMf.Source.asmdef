@@ -1,0 +1,18 @@
+{
+    "name": "IxMilia.ThreeMf.Source",
+    "rootNamespace": "",
+    "references": [
+        "GUID:57ea556f5b6da1f45b2f4733dd5eae3f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "TRILIB_USE_SOURCE_LIBS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

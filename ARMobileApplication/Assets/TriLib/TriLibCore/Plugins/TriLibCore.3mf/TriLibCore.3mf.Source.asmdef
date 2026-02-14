@@ -1,0 +1,19 @@
+{
+    "name": "TriLibCore.3mf.Source",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6af1de7d724cb3149b7d22ac580fa5a0",
+        "GUID:2e15e76ce935d124db3743bd5088ee9b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "TRILIB_USE_SOURCE_LIBS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

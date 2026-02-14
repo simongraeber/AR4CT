@@ -1,7 +1,22 @@
 ﻿<Solution>
-  <Project Path="Unity.XR.Interaction.Toolkit.Samples.StarterAssets.csproj" />
-  <Project Path="Unity.XR.Interaction.Toolkit.Samples.ARStarterAssets.csproj" />
+  <Project Path="IxMilia.ThreeMf.Source.csproj" />
+  <Project Path="TriLibCore.Source.csproj" />
+  <Project Path="ICSharpCode.SharpZipLib.Source.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="TriLibCore.Gltf.Source.csproj" />
+  <Project Path="TriLibCore.Fbx.Source.csproj" />
+  <Project Path="Unity.XR.Interaction.Toolkit.Samples.StarterAssets.csproj" />
+  <Project Path="TriLibCore.Ply.Source.csproj" />
+  <Project Path="Unity.XR.Interaction.Toolkit.Samples.ARStarterAssets.csproj" />
+  <Project Path="TriLibCore.Stl.Source.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="TriLibCore.Dae.Source.csproj" />
+  <Project Path="StbImageSharp.Source.csproj" />
+  <Project Path="TriLibCore.3mf.Source.csproj" />
+  <Project Path="LibTessDotNet.Source.csproj" />
+  <Project Path="TriLibCore.Obj.Source.csproj" />
   <Project Path="Unity.XR.Interaction.Toolkit.Samples.ARStarterAssets.Editor.csproj" />
   <Project Path="Unity.XR.Interaction.Toolkit.Samples.StarterAssets.Editor.csproj" />
+  <Project Path="TriLibCore.HDRLoader.Source.csproj" />
+  <Project Path="TriLibCore.Gltf.Draco.Source.csproj" />
 </Solution>

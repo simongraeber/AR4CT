@@ -1,0 +1,19 @@
+{
+    "name": "TriLibCore.Obj.Source",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6af1de7d724cb3149b7d22ac580fa5a0",
+        "GUID:9a0f4f1535427c64bb6e3ea2c7818417"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "TRILIB_USE_SOURCE_LIBS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
