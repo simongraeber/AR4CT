@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 namespace CT4AR.AR
@@ -22,8 +23,14 @@ namespace CT4AR.AR
         [SerializeField] private Transform tipIndicator;
 
         [Header("Distance Display")]
-        [Tooltip("TextMeshPro component that shows the distance in cm.")]
+        [Tooltip("TextMeshPro component that shows the distance number.")]
         [SerializeField] private TMP_Text distanceText;
+
+        [Tooltip("TextMeshPro component that shows the unit (e.g. 'cm'). Hidden when target is reached.")]
+        [SerializeField] private TMP_Text unitText;
+
+        [Tooltip("Separate text for the numeric value only. Hidden when target is reached.")]
+        [SerializeField] private TMP_Text numberText;
 
         [Header("Color Gradient")]
         [Tooltip("Distance (in metres) considered 'far'. Maps to the far-end of the gradient.")]
@@ -42,12 +49,19 @@ namespace CT4AR.AR
         [Tooltip("UI element activated when the tool tip is within the threshold.")]
         [SerializeField] private GameObject targetReachedUI;
 
+        [Tooltip("Glow image whose colour follows the distance gradient.")]
+        [SerializeField] private Image glowImage;
+
         [Header("Audio")]
         [Tooltip("Sound played once when the target is first reached.")]
         [SerializeField] private AudioClip targetReachedClip;
 
         [Tooltip("AudioSource used to play the clip. If left empty one will be added automatically.")]
         [SerializeField] private AudioSource audioSource;
+
+        [Header("Visualization")]
+        [Tooltip("The visual part of the tool (e.g. the 3D model) that can be toggled.")]
+        [SerializeField] private GameObject toolVisuals;
 
         // ──────────────────────── Runtime State ───────────────────────────
 
@@ -89,15 +103,24 @@ namespace CT4AR.AR
             float distanceM  = Vector3.Distance(tipWorld, targetPoint.position);
             float distanceCm = distanceM * 100f;
 
-            // Update text
+            // Continuous colour lerp
+            float t = Mathf.Clamp01(distanceM / maxColorDistance);
+            Color currentColor = Color.Lerp(closeColor, farColor, t);
+
+            // Update distance text
             if (distanceText != null)
             {
-                distanceText.text = $"{distanceCm:F1} cm";
-
-                // Continuous colour lerp
-                float t = Mathf.Clamp01(distanceM / maxColorDistance);
-                distanceText.color = Color.Lerp(closeColor, farColor, t);
+                distanceText.text = $"{distanceCm:F1}";
+                distanceText.color = currentColor;
             }
+
+            // Update unit text colour
+            if (unitText != null)
+                unitText.color = currentColor;
+
+            // Update glow image colour
+            if (glowImage != null)
+                glowImage.color = currentColor;
 
             // Target reached — trigger once only
             if (!_wasReached && distanceM <= targetReachedThreshold)
@@ -107,9 +130,24 @@ namespace CT4AR.AR
                 if (targetReachedUI != null)
                     targetReachedUI.SetActive(true);
 
+                // Hide number and unit text
+                if (numberText != null)
+                    numberText.gameObject.SetActive(false);
+                if (unitText != null)
+                    unitText.gameObject.SetActive(false);
+
                 if (targetReachedClip != null && audioSource != null)
                     audioSource.PlayOneShot(targetReachedClip);
             }
+        }
+
+        /// <summary>
+        /// Toggles the main visual part of the tool (e.g. the mesh).
+        /// </summary>
+        public void SetVisualsActive(bool active)
+        {
+            if (toolVisuals != null)
+                toolVisuals.SetActive(active);
         }
     }
 }

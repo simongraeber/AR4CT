@@ -8,6 +8,8 @@ using Unity.Jobs;
 using TriLibCore;
 using TriLibCore.General;
 
+using CT4AR.Utils;
+
 namespace CT4AR.AR
 {
     /// <summary>
@@ -26,8 +28,8 @@ namespace CT4AR.AR
         [Tooltip("Physical width of the printed marker in meters.")]
         [SerializeField] private float markerWidthInMeters = 0.15f;
 
-        [Tooltip("Scale applied to the loaded model (e.g. 0.01 to convert cm to m).")]
-        [SerializeField] private float modelScale = 0.01f;
+        [Tooltip("Scale applied to the loaded model. 1.0 = real-world size (model is in metres).")]
+        [SerializeField] private float modelScale = 1.0f;
 
         [Tooltip("Local position offset of the model relative to the tracked image.")]
         [SerializeField] private Vector3 modelOffset = Vector3.zero;
@@ -124,6 +126,9 @@ namespace CT4AR.AR
                 {
                     _loadedModel = assetLoaderContext.RootGameObject;
                     _loadedModel.SetActive(false);
+
+                    MaterialTransparencyHelper.ApplyEncodedTransparency(_loadedModel);
+
                     _modelReady = true;
                     Debug.Log("[DynamicImageTracker] Model loaded via TriLib.");
                     TryActivateTracking();
@@ -218,12 +223,12 @@ namespace CT4AR.AR
 
                         if (_pointData?.point != null && pointMarkerPrefab != null)
                         {
-                            Vector3 pointLocalPos = _pointData.point.ToVector3() * modelScale;
+                            Vector3 pointInMeters = _pointData.point.ToVector3();
+                            
                             var marker = Instantiate(pointMarkerPrefab, instance.transform);
-                            marker.transform.localPosition = pointLocalPos / modelScale;
+                            marker.transform.localPosition = pointInMeters;
                             _pointMarkerTransform = marker.transform;
 
-                            // Wire ToolBehaviour if the tool was already spawned
                             if (_spawnedObjects.TryGetValue(ToolImageName, out var toolObj))
                             {
                                 var tb = toolObj.GetComponent<ToolBehaviour>();
@@ -236,6 +241,23 @@ namespace CT4AR.AR
                 else
                 {
                     _spawnedObjects[imageName].SetActive(true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Public method to toggle the tool visuals (e.g. from a UI toggle/button).
+        /// Finds the spawned tool and calls SetVisualsActive on its ToolBehaviour.
+        /// </summary>
+        /// <param name="active">If true, visuals are shown; otherwise hidden.</param>
+        public void SetToolVisualsActive(bool active)
+        {
+            if (_spawnedObjects.TryGetValue(ToolImageName, out var toolObj) && toolObj != null)
+            {
+                var tb = toolObj.GetComponent<ToolBehaviour>();
+                if (tb != null)
+                {
+                    tb.SetVisualsActive(active);
                 }
             }
         }

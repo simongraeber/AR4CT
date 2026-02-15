@@ -4,7 +4,8 @@ using UnityEngine;
 namespace CT4AR.Networking
 {
     /// <summary>
-    /// JSON-serializable data returned by GET /scans/{scan_id}/point.
+    /// JSON-serializable data returned by GET /scans/{scan_id}/bundle.
+    /// The point is already transformed into FBX model space (metres, centred).
     /// </summary>
     [Serializable]
     public class ScanPointData
@@ -22,6 +23,6 @@ namespace CT4AR.Networking
         public string label;
         public string set_at;
 
-        public Vector3 ToVector3() => new Vector3(x, y, z);
+        public Vector3 ToVector3() => new Vector3(x, z, y);
     }
 }

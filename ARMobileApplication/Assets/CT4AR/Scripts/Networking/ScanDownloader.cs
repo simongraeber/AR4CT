@@ -92,12 +92,12 @@ namespace CT4AR.Networking
             string baseUrl = config != null ? config.apiBaseUrl : "https://api.ar4ct.com";
             string fbxUrl = $"{baseUrl.TrimEnd('/')}/scans/{scanID}/fbx";
             string imageUrl = $"{baseUrl.TrimEnd('/')}/scans/{scanID}/image.png";
-            string pointUrl = $"{baseUrl.TrimEnd('/')}/scans/{scanID}/point";
+            string bundleUrl = $"{baseUrl.TrimEnd('/')}/scans/{scanID}/bundle";
 
             Debug.Log("[CT4AR] Starting FBX download: " + fbxUrl);
             Debug.Log("[CT4AR] Starting image download: " + imageUrl);
-            Debug.Log("[CT4AR] Starting point download: " + pointUrl);
-            StartCoroutine(DownloadRoutine(fbxUrl, imageUrl, pointUrl));
+            Debug.Log("[CT4AR] Starting bundle download: " + bundleUrl);
+            StartCoroutine(DownloadRoutine(fbxUrl, imageUrl, bundleUrl));
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace CT4AR.Networking
             if (downloadUI != null) downloadUI.SetActive(false);
         }
 
-        private System.Collections.IEnumerator DownloadRoutine(string fbxUrl, string imageUrl, string pointUrl)
+        private System.Collections.IEnumerator DownloadRoutine(string fbxUrl, string imageUrl, string bundleUrl)
         {
             IsDownloading = true;
 
@@ -150,29 +150,29 @@ namespace CT4AR.Networking
                 }
             }
 
-            // --- Download point data ---
-            Debug.Log("[CT4AR] Downloading point data\u2026");
-            using (UnityWebRequest pointRequest = UnityWebRequest.Get(pointUrl))
+            // --- Download bundle (point in FBX model space) ---
+            Debug.Log("[CT4AR] Downloading bundle data\u2026");
+            using (UnityWebRequest bundleRequest = UnityWebRequest.Get(bundleUrl))
             {
-                _activeRequest = pointRequest;
-                yield return pointRequest.SendWebRequest();
+                _activeRequest = bundleRequest;
+                yield return bundleRequest.SendWebRequest();
 
-                if (pointRequest.result != UnityWebRequest.Result.Success)
+                if (bundleRequest.result != UnityWebRequest.Result.Success)
                 {
-                    string warnMsg = $"Point data download failed: {pointRequest.error} (HTTP {pointRequest.responseCode})";
+                    string warnMsg = $"Bundle download failed: {bundleRequest.error} (HTTP {bundleRequest.responseCode})";
                     Debug.LogWarning("[CT4AR] " + warnMsg);
                 }
                 else
                 {
                     try
                     {
-                        PointData = JsonUtility.FromJson<ScanPointData>(pointRequest.downloadHandler.text);
-                        Debug.Log("[CT4AR] Point data downloaded.");
+                        PointData = JsonUtility.FromJson<ScanPointData>(bundleRequest.downloadHandler.text);
+                        Debug.Log("[CT4AR] Bundle data downloaded (point in FBX space).");
                         onPointDataDownloaded?.Invoke(PointData);
                     }
                     catch (System.Exception e)
                     {
-                        Debug.LogWarning("[CT4AR] Failed to parse point data: " + e.Message);
+                        Debug.LogWarning("[CT4AR] Failed to parse bundle data: " + e.Message);
                     }
                 }
             }
