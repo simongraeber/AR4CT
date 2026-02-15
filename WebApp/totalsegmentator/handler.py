@@ -290,9 +290,9 @@ def nifti_to_stl(nifti_path: str, stl_path: str):
     # Generate mesh using marching cubes
     verts, faces, _, _ = measure.marching_cubes(data, level=0.5)
     
-    # Transform voxel coords → physical coords (mm)
-    spacing = np.array(img.header.get_zooms()[:3])
-    origin = np.array(img.affine[:3, 3])
+    # Transform voxel coords → physical coords (mm) then to meters
+    spacing = np.array(img.header.get_zooms()[:3]) * 0.001
+    origin = np.array(img.affine[:3, 3]) * 0.001
     verts = verts * spacing + origin
     
     # Create STL mesh
@@ -355,10 +355,10 @@ def extract_body_surface(input_nifti_path: str, stl_path: str, hu_threshold: flo
 
     verts, faces, _, _ = measure.marching_cubes(body_mask, level=0.5, step_size=step)
 
-    # Transform voxel coords → physical coords (mm)
+    # Transform voxel coords → physical coords (mm) then to meters
     # marching_cubes with step_size already returns coords in original voxel space
-    spacing = np.array(img.header.get_zooms()[:3])
-    origin = np.array(img.affine[:3, 3])
+    spacing = np.array(img.header.get_zooms()[:3]) * 0.001
+    origin = np.array(img.affine[:3, 3]) * 0.001
     verts = verts * spacing + origin
 
     stl_mesh = mesh.Mesh(np.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))

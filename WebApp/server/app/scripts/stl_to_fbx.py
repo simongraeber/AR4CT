@@ -30,6 +30,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--stl-dir", required=True, help="Directory with .stl files")
     parser.add_argument("--output", required=True, help="Output .fbx path")
     parser.add_argument("--colors", required=True, help="organ_colors.json path")
+    parser.add_argument("--offset-file", default="",
+                        help="Write the centering offset as JSON to this path")
     return parser.parse_args(argv)
 
 
@@ -117,17 +119,20 @@ def remesh_and_smooth(obj: bpy.types.Object) -> None:
     bpy.ops.object.shade_smooth()
 
 
-def center_all_objects() -> None:
+def center_all_objects() -> list[float]:
     """
     Move all objects so their combined bounding box is centred at the
     world origin.  This corrects for medical-imaging coordinates that
     are far from (0, 0, 0).
+
+    Returns the [x, y, z] offset that was subtracted from every object
+    (i.e. the bounding-box centre before the shift).
     """
     import mathutils
 
     objs = [o for o in bpy.data.objects if o.type == "MESH"]
     if not objs:
-        return
+        return [0.0, 0.0, 0.0]
 
     all_coords = []
     for obj in objs:
@@ -148,6 +153,8 @@ def center_all_objects() -> None:
 
     for obj in objs:
         obj.location -= centre
+
+    return [centre.x, centre.y, centre.z]
 
 
 # ── Main ─────────────────────────────────────────────────────────────────
@@ -195,7 +202,15 @@ def main() -> None:
     if imported_count == 0:
         sys.exit(1)
 
-    center_all_objects()
+    centre_offset = center_all_objects()
+
+    # Persist the centering offset so that annotation points (stored in the
+    # original coordinate system) can be transformed into FBX-model space.
+    if args.offset_file:
+        offset_path = Path(args.offset_file)
+        offset_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(offset_path, "w") as f:
+            json.dump({"centre_offset": centre_offset}, f)
 
     bpy.ops.object.select_all(action="SELECT")
     output_path.parent.mkdir(parents=True, exist_ok=True)

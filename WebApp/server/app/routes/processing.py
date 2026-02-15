@@ -205,7 +205,6 @@ async def get_processing_status(scan_id: str):
         "runpod_job_id": runpod_job_id,
         "organs_processed": metadata.get("organs_processed", []),
         "has_fbx": metadata.get("has_fbx", False),
-        "has_body": metadata.get("has_body", False),
         "fbx_size": metadata.get("fbx_size"),
         "error": metadata.get("processing_error"),
     }
