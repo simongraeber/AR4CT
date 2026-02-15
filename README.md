@@ -6,6 +6,8 @@ A voluntary project for the course **Medical Augmented Reality** at TUM by Prof.
 
 AR4CT bridges CT imaging and augmented reality: upload a CT scan, automatically segment it into 3D organ models, then visualise the result in AR on a mobile device.
 
+**🌐 Try it live at [ar4ct.com](https://ar4ct.com)**
+
 ![AR4CT Overview](Images/overview.png)
 
 ---

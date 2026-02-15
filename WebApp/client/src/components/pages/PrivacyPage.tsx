@@ -42,11 +42,27 @@ function PrivacyPage() {
 
                 <section className="mb-8">
                     <h2 className="text-xl font-semibold mb-3">4. Third-Party Services</h2>
-                    <p className="text-muted-foreground leading-relaxed">
-                        This application does not integrate third-party tracking or advertising services.
-                        However, uploaded CT scan data may be sent to external services for processing,
+                    <p className="text-muted-foreground leading-relaxed mb-3">
+                        Uploaded CT scan data may be sent to external services for processing,
                         such as automated segmentation. No personal data beyond the uploaded scan files
                         is shared with these services.
+                    </p>
+                    <p className="text-muted-foreground leading-relaxed">
+                        <strong>YouTube:</strong> This website embeds videos from YouTube
+                        (Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Ireland).
+                        We use YouTube's privacy-enhanced mode (<code>youtube-nocookie.com</code>),
+                        which means YouTube does not store cookies on your device for tracking purposes
+                        unless you play the video. When you play an embedded video, a connection to
+                        YouTube's servers is established and your IP address is transmitted.
+                        YouTube's privacy policy:{" "}
+                        <a
+                            href="https://policies.google.com/privacy"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary underline hover:no-underline"
+                        >
+                            https://policies.google.com/privacy
+                        </a>.
                     </p>
                 </section>
 

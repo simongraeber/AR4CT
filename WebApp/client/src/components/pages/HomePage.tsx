@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Upload, QrCode, Eye, ArrowRight } from "lucide-react"
+import { Upload, QrCode, Eye } from "lucide-react"
 import { motion } from "framer-motion"
 import Page from "@/components/shared/Page"
 import { scrollAnimation } from "@/components/shared/scrollAnimation"
@@ -94,7 +94,7 @@ function HomePage() {
                 </div>
             </motion.section>
 
-            {/* CTA Section */}
+            {/* Demo Video Section */}
             <motion.section
                 className="w-full max-w-3xl pb-16"
                 variants={scrollAnimation}
@@ -108,16 +108,18 @@ function HomePage() {
                     whileHover={{ scale: 1.02, boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.1)" }}
                     transition={{ duration: 0.3 }}
                 >
-                    <h3 className="text-2xl font-semibold mb-3">Ready to get started?</h3>
+                    <h3 className="text-2xl font-semibold mb-3">See a Demo</h3>
                     <p className="text-muted-foreground mb-6">
-                        Upload your first CT scan or open an existing one to explore the 3D viewer.
+                        Watch a short video to see AR4CT in action.
                     </p>
-                    <div className="flex gap-4 justify-center flex-wrap">
-                        <Link to="/scans/new">
-                            <Button className="gap-2">
-                                Get Started <ArrowRight className="w-4 h-4" />
-                            </Button>
-                        </Link>
+                    <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+                        <iframe
+                            className="absolute inset-0 w-full h-full"
+                            src="https://www.youtube-nocookie.com/embed/PLEI09QLB98"
+                            title="AR4CT Demo Video"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        />
                     </div>
                 </motion.div>
             </motion.section>
