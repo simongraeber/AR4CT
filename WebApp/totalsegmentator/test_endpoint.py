@@ -4,8 +4,8 @@ import time
 import json
 import os
 
-RUNPOD_API_KEY = "REDACTED_API_KEY"
-ENDPOINT_ID = "REDACTED_ENDPOINT_ID"
+RUNPOD_API_KEY = os.environ.get("RUNPOD_API_KEY", "")
+ENDPOINT_ID = os.environ.get("RUNPOD_ENDPOINT_ID", "")
 
 
 def run_segmentation(file_url, organs=["liver", "heart"], callback_url=None):

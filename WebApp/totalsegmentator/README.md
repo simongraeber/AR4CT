@@ -1,15 +1,20 @@
 # TotalSegmentator on RunPod
 
-To run [TotalSegmentator](https://github.com/wasserth/TotalSegmentator) in the cloud I use [RunPod.io](https://runpod.io/) for a cost-effective, serverless deployment.
+Runs [TotalSegmentator](https://github.com/wasserth/TotalSegmentator) as a serverless GPU worker on [RunPod.io](https://runpod.io/) for cost-effective CT segmentation.
+
+## What It Does
+
+The handler receives a CT scan URL, runs TotalSegmentator to produce NIfTI segmentation masks for 117 organ classes, converts each mask to an STL mesh via marching cubes, and uploads the STL files back to the AR4CT server via a callback URL. It also generates a "body" surface mesh by thresholding at -500 HU.
 
 ## Docker Image
 
 The Docker image used for deployment:
-* [Docker Hub: simon1999/totalsegmentator-runpod](https://hub.docker.com/repository/docker/simon1999/totalsegmentator-runpod)
+- [Docker Hub: simon1999/totalsegmentator-runpod](https://hub.docker.com/repository/docker/simon1999/totalsegmentator-runpod)
 
-### Build and Push the Docker Image
+### Build and Push
 
-This image can take several minutes to build
+The image includes PyTorch 2.4 + CUDA 12.4 + TotalSegmentator and can take several minutes to build:
+
 ```bash
 docker build --platform linux/amd64 -t simon1999/totalsegmentator-runpod:latest .
 docker push simon1999/totalsegmentator-runpod:latest
@@ -17,13 +22,24 @@ docker push simon1999/totalsegmentator-runpod:latest
 
 ## RunPod Setup
 
-To deploy on RunPod, configure your container as shown below:
-- GPU configuration: *16GB*
-- Container Disk: *20GB*
-- Container image: `simon1999/totalsegmentator-runpod:latest`
+Create a serverless endpoint on RunPod with:
+
+- **GPU configuration:** 16 GB VRAM
+- **Container Disk:** 20 GB
+- **Container image:** `simon1999/totalsegmentator-runpod:latest`
 
 ![RunPod Container Configuration](ConterinConfigRunpod.png)
-Simons RunPod Dasbord [Overview](https://console.runpod.io/serverless/user/endpoint/z13vo1tf9l3sst)
+
+Set the resulting endpoint ID and your RunPod API key as environment variables on the AR4CT server (`RUNPOD_ENDPOINT_ID`, `RUNPOD_API_KEY`).
+
+## Testing
+
+```bash
+export RUNPOD_API_KEY="your_key"
+export RUNPOD_ENDPOINT_ID="your_endpoint_id"
+python test_endpoint.py
+```
 
 ---
-For more details, see the [TotalSegmentator GitHub repository](https://github.com/wasserth/TotalSegmentator).
+
+For more details on TotalSegmentator itself, see the [TotalSegmentator GitHub repository](https://github.com/wasserth/TotalSegmentator).
