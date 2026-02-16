@@ -1,8 +1,11 @@
 import { motion } from "framer-motion"
-import { Smartphone, ExternalLink } from "lucide-react"
+import { Smartphone, ExternalLink, Download } from "lucide-react"
 import Page from "@/components/shared/Page"
 import { scrollAnimation } from "@/components/shared/scrollAnimation"
 import { Button } from "@/components/ui/button"
+
+const APK_URL =
+    "https://github.com/simongraeber/AR4CT/releases/latest/download/AR4CT.apk"
 
 function AppPage() {
     return (
@@ -37,11 +40,29 @@ function AppPage() {
                         directly on your Android device.
                     </p>
 
-                    <div className="pt-2">
-                        <Button variant="outline" disabled>
-                            <ExternalLink className="mr-2 h-4 w-4" />
-                            Coming soon on Google Play
-                        </Button>
+                    <div className="pt-2 space-y-3">
+                        <a href={APK_URL} download>
+                            <Button className="w-full">
+                                <Download className="mr-2 h-4 w-4" />
+                                Download APK (Debug Build)
+                            </Button>
+                        </a>
+
+                        <p className="text-xs text-muted-foreground">
+                            Enable <em>Install from unknown sources</em> on your
+                            Android device, then open the downloaded APK to install.
+                        </p>
+
+                        <a
+                            href="https://github.com/simongraeber/AR4CT"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Button variant="outline" className="w-full mt-2">
+                                <ExternalLink className="mr-2 h-4 w-4" />
+                                Build it yourself on GitHub
+                            </Button>
+                        </a>
                     </div>
                 </div>
             </motion.section>

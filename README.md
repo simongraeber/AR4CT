@@ -28,34 +28,34 @@ The project consists of three components:
 
 ```
                           ┌──────────────────────┐
-  Upload CT scan     ───► │  Web App (FastAPI)    │
-  (.zip / .nii / .mhd)   └──────┬───────────────┘
+  Upload CT scan     ───► │  Web App (FastAPI)   │
+  (.zip / .nii / .mhd)    └──────┬───────────────┘
                                  │  auto-submit
                                  ▼
-                          ┌──────────────────────┐
+                          ┌───────────────────────┐
                           │  RunPod GPU Worker    │
                           │  TotalSegmentator     │
                           │  NIfTI → STL per organ│
-                          └──────┬───────────────┘
+                          └──────┬────────────────┘
                                  │  callback
                                  ▼
-                          ┌──────────────────────┐
+                          ┌───────────────────────┐
                           │  Blender (headless)   │
                           │  STL → coloured FBX   │
-                          └──────┬───────────────┘
+                          └──────┬────────────────┘
                                  │
                                  ▼
-                          ┌──────────────────────┐
+                          ┌───────────────────────┐
   Print QR + tool    ◄─── │  Web App              │
   marker PDF              │  CT viewer, annotate  │
-                          └──────┬───────────────┘
+                          └──────┬────────────────┘
                                  │  deep link
                                  ▼
-                          ┌──────────────────────┐
+                          ┌───────────────────────┐
   Scan QR in AR      ───► │  Unity AR App         │
   See 3D model            │  Tool tracking +      │
   Track tool distance     │  distance feedback    │
-                          └──────────────────────┘
+                          └───────────────────────┘
 ```
 
 1. **Upload** a CT scan via the web app
@@ -84,6 +84,10 @@ See [WebApp/README.md](WebApp/README.md) for setup instructions.
 ## AR App (Unity)
 
 ![AR App Demo](Images/ar_demo.png)
+
+> **Want to try it?** Download the debug APK directly:  
+> [⬇ Download AR4CT.apk](https://github.com/simongraeber/AR4CT/releases/latest/download/AR4CT.apk)  
+> Or build it yourself from the Unity project below.
 
 - **Deep Link** — Open `ar4ct.com/app/{scanId}` on a mobile device to launch the AR app
 - **Image Tracking** — Tracks the printed QR code and the tool marker simultaneously
