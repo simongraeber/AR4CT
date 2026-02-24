@@ -380,7 +380,6 @@ def handler(event):
         - organs: List of organs to segment
         - fast: Whether to use fast mode (3mm resampling)
         - callback_url: Base URL to upload STL files to (e.g., https://api.ar4ct.com/scans/{scan_id})
-        - callback_secret: Secret token for authenticating uploads
     
     Output: Metadata about processed organs (files are uploaded directly to callback_url)
     """

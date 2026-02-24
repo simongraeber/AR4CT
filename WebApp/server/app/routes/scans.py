@@ -122,33 +122,6 @@ async def get_scan(scan_id: str):
     return metadata
 
 
-@router.get("")
-async def list_scans():
-    """List all scans."""
-    from app.config import DATA_DIR
-
-    scans = []
-    for scan_dir in DATA_DIR.iterdir():
-        if scan_dir.is_dir():
-            scan_id = scan_dir.name
-            metadata = load_metadata(scan_id)
-            if metadata:
-                metadata["has_fbx"] = get_fbx_path(scan_id) is not None
-                scans.append(
-                    {
-                        "scan_id": scan_id,
-                        "created_at": metadata.get("created_at"),
-                        "status": metadata.get("status"),
-                        "has_point": metadata.get("point") is not None,
-                        "has_fbx": metadata["has_fbx"],
-                        "original_filename": metadata.get("original_filename"),
-                    }
-                )
-
-    scans.sort(key=lambda x: x.get("created_at", ""), reverse=True)
-    return {"scans": scans, "count": len(scans)}
-
-
 @router.delete("/{scan_id}")
 async def delete_scan(scan_id: str):
     """Delete a scan and all its files."""

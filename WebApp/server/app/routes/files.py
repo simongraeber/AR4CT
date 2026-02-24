@@ -40,53 +40,6 @@ async def download_fbx(scan_id: str):
     )
 
 
-@router.post("/{scan_id}/fbx")
-async def upload_fbx_for_scan(scan_id: str, file: UploadFile = File(...)):
-    """Upload/replace the FBX file for an existing scan."""
-    if not scan_exists(scan_id):
-        raise HTTPException(status_code=404, detail="Scan not found")
-
-    if not file.filename.lower().endswith(".fbx"):
-        raise HTTPException(status_code=400, detail="File must be an FBX file")
-
-    scan_dir = get_scan_dir(scan_id)
-    fbx_path = scan_dir / "model.fbx"
-
-    total_size = 0
-    try:
-        with open(fbx_path, "wb") as buffer:
-            while chunk := await file.read(1024 * 1024):
-                total_size += len(chunk)
-                if total_size > MAX_FILE_SIZE:
-                    buffer.close()
-                    if fbx_path.exists():
-                        os.remove(fbx_path)
-                    raise HTTPException(
-                        status_code=413,
-                        detail=f"File too large. Maximum size is {MAX_FILE_SIZE / (1024**2):.0f} MB",
-                    )
-                buffer.write(chunk)
-    except HTTPException:
-        raise
-    except Exception as e:
-        if fbx_path.exists():
-            os.remove(fbx_path)
-        raise HTTPException(status_code=500, detail=f"Failed to save FBX: {str(e)}")
-
-    metadata = load_metadata(scan_id)
-    metadata["status"] = "completed"
-    metadata["has_fbx"] = True
-    metadata["fbx_uploaded_at"] = datetime.utcnow().isoformat() + "Z"
-    save_metadata(scan_id, metadata)
-
-    return {
-        "scan_id": scan_id,
-        "message": "FBX uploaded successfully",
-        "size": total_size,
-        "fbx_url": f"/scans/{scan_id}/fbx",
-    }
-
-
 # ── CT Scan ──────────────────────────────────────────────────────────────
 
 @router.post("/{scan_id}/ct")
