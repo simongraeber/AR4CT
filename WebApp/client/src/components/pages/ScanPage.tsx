@@ -20,7 +20,7 @@ function ScanPage() {
   const navigate = useNavigate();
   const isNew = scanId === "new";
 
-  const { scanData, processingStatus, loading, error, notFound, refetch } =
+  const { scanData, loading, error, notFound, refetch } =
     useScanPolling({
       scanId: scanId ?? "",
       enabled: !!scanId && !isNew,
@@ -54,8 +54,8 @@ function ScanPage() {
     setRetryError(null);
     try {
       const hasOrgans =
-        processingStatus?.organs_processed &&
-        processingStatus.organs_processed.length > 0;
+        scanData.organs_processed &&
+        scanData.organs_processed.length > 0;
       if (
         (scanData.status === "error" && hasOrgans) ||
         scanData.status === "segmented"
@@ -72,7 +72,7 @@ function ScanPage() {
     } finally {
       setRetrying(false);
     }
-  }, [scanId, scanData, processingStatus, refetch]);
+  }, [scanId, scanData, refetch]);
 
   const handleUploadComplete = useCallback(
     (newScanId: string) => {
@@ -150,8 +150,8 @@ function ScanPage() {
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <ProcessingTimeline
                 status={scanData.status}
-                error={retryError || processingStatus?.error}
-                organsProcessed={processingStatus?.organs_processed}
+                error={retryError || scanData.processing_error}
+                organsProcessed={scanData.organs_processed}
                 onRetry={handleRetry}
                 retrying={retrying}
               />

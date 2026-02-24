@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.config import API_BASE_URL, DEFAULT_ORGANS
 from app.storage import load_metadata, save_metadata, scan_exists
-from app.services.runpod import submit_segmentation_job, poll_job_status
+from app.services.runpod import submit_segmentation_job
 from app.services import run_post_processing
 
 logger = logging.getLogger(__name__)
@@ -131,80 +131,3 @@ async def start_post_processing(scan_id: str):
 
     return result
 
-
-# ── Poll status ──────────────────────────────────────────────────────────
-
-@router.get("/{scan_id}/process/status")
-async def get_processing_status(scan_id: str):
-    """
-    Check the current processing status.
-
-    If a RunPod job_id exists and local status is still 'processing',
-    we poll RunPod for an update and sync the metadata accordingly.
-    When segmentation completes, post-processing is triggered automatically.
-    """
-    if not scan_exists(scan_id):
-        raise HTTPException(status_code=404, detail="Scan not found")
-
-    metadata = load_metadata(scan_id)
-    if not metadata:
-        raise HTTPException(status_code=404, detail="Scan metadata not found")
-
-    runpod_job_id = metadata.get("runpod_job_id")
-
-    # ── Auto-retry: if stuck in "uploaded" with no RunPod job, kick off
-    #    segmentation automatically so the user doesn't have to do it manually.
-    if metadata.get("status") == "uploaded" and not runpod_job_id:
-        try:
-            ct_url = f"{API_BASE_URL}/scans/{scan_id}/ct"
-            callback_url = f"{API_BASE_URL}/scans/{scan_id}"
-            result = await submit_segmentation_job(
-                file_url=ct_url,
-                organs=DEFAULT_ORGANS,
-                callback_url=callback_url,
-            )
-            if "job_id" in result:
-                metadata["status"] = "processing"
-                metadata["runpod_job_id"] = result["job_id"]
-                from datetime import datetime as _dt
-                metadata["processing_started_at"] = _dt.utcnow().isoformat() + "Z"
-                save_metadata(scan_id, metadata)
-                runpod_job_id = result["job_id"]
-                logger.info("Auto-triggered segmentation for stuck scan %s", scan_id)
-        except Exception:
-            logger.exception("Auto-trigger segmentation failed for scan %s", scan_id)
-
-    if runpod_job_id and metadata.get("status") == "processing":
-        rp_status = await poll_job_status(runpod_job_id)
-        rp_state = rp_status.get("status", "UNKNOWN")
-
-        if rp_state == "COMPLETED":
-            metadata["status"] = "segmented"
-            metadata["processing_completed_at"] = datetime.utcnow().isoformat() + "Z"
-            # Clear errors from any previous failed attempt
-            metadata.pop("processing_error", None)
-
-            output = rp_status.get("output", {})
-            metadata["organs_processed"] = output.get("organs_processed", [])
-            save_metadata(scan_id, metadata)
-
-            try:
-                await run_post_processing(scan_id)
-                metadata = load_metadata(scan_id)
-            except Exception:
-                logger.exception("Post-processing failed for scan %s", scan_id)
-
-        elif rp_state == "FAILED":
-            metadata["status"] = "error"
-            metadata["processing_error"] = rp_status.get("error", "Unknown RunPod error")
-            save_metadata(scan_id, metadata)
-
-    return {
-        "scan_id": scan_id,
-        "status": metadata.get("status"),
-        "runpod_job_id": runpod_job_id,
-        "organs_processed": metadata.get("organs_processed", []),
-        "has_fbx": metadata.get("has_fbx", False),
-        "fbx_size": metadata.get("fbx_size"),
-        "error": metadata.get("processing_error"),
-    }

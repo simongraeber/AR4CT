@@ -22,17 +22,6 @@ export interface ScanMetadata {
   fbx_size?: number;
 }
 
-export interface ProcessingStatus {
-  scan_id: string;
-  status: ScanStatus;
-  runpod_job_id?: string;
-  organs_processed: string[];
-  has_fbx: boolean;
-  has_body: boolean;
-  fbx_size?: number;
-  error?: string;
-}
-
 export interface UploadResult {
   scan_id: string;
   filename: string;
@@ -51,14 +40,6 @@ export async function fetchScan(scanId: string): Promise<ScanMetadata> {
     err.status = res.status;
     throw err;
   }
-  return res.json();
-}
-
-export async function fetchProcessingStatus(
-  scanId: string,
-): Promise<ProcessingStatus> {
-  const res = await fetch(`${API_BASE}/scans/${scanId}/process/status`);
-  if (!res.ok) throw new Error(`Failed to fetch status (${res.status})`);
   return res.json();
 }
 
