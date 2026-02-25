@@ -13,6 +13,7 @@ from app.storage import (
     save_metadata,
     scan_exists,
     get_fbx_path,
+    get_usdz_path,
 )
 
 router = APIRouter(prefix="/scans", tags=["files"])
@@ -37,6 +38,26 @@ async def download_fbx(scan_id: str):
         path=fbx_path,
         filename=f"{scan_id}.fbx",
         media_type="application/octet-stream",
+    )
+
+
+@router.get("/{scan_id}/usdz")
+async def download_usdz(scan_id: str):
+    """Download the USDZ model file for a scan."""
+    if not scan_exists(scan_id):
+        raise HTTPException(status_code=404, detail="Scan not found")
+
+    usdz_path = get_usdz_path(scan_id)
+    if not usdz_path:
+        raise HTTPException(
+            status_code=404,
+            detail="USDZ file not found. Scan may not be processed yet.",
+        )
+
+    return FileResponse(
+        path=usdz_path,
+        filename=f"{scan_id}.usdz",
+        media_type="model/vnd.usdz+zip",
     )
 
 

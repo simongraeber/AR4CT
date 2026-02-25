@@ -44,3 +44,11 @@ def get_fbx_path(scan_id: str) -> Optional[Path]:
     if fbx_path.exists():
         return fbx_path
     return None
+
+
+def get_usdz_path(scan_id: str) -> Optional[Path]:
+    """Get the USDZ file path if it exists."""
+    usdz_path = get_scan_dir(scan_id) / "model.usdz"
+    if usdz_path.exists():
+        return usdz_path
+    return None

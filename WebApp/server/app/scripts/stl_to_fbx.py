@@ -29,6 +29,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="STL → FBX converter")
     parser.add_argument("--stl-dir", required=True, help="Directory with .stl files")
     parser.add_argument("--output", required=True, help="Output .fbx path")
+    parser.add_argument("--usdz-output", default="", help="Output .usdz path")
     parser.add_argument("--colors", required=True, help="organ_colors.json path")
     parser.add_argument("--offset-file", default="",
                         help="Write the centering offset as JSON to this path")
@@ -213,6 +214,12 @@ def main() -> None:
             json.dump({"centre_offset": centre_offset}, f)
 
     bpy.ops.object.select_all(action="SELECT")
+    bpy.context.view_layer.objects.active = [
+        o for o in bpy.data.objects if o.type == "MESH"
+    ][0]
+    bpy.ops.object.join()
+
+    bpy.ops.object.select_all(action="SELECT")
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     bpy.ops.export_scene.fbx(
@@ -223,6 +230,11 @@ def main() -> None:
         embed_textures=False,
         mesh_smooth_type="OFF",
     )
+
+    if args.usdz_output:
+        usdz_path = Path(args.usdz_output)
+        usdz_path.parent.mkdir(parents=True, exist_ok=True)
+        bpy.ops.wm.usd_export(filepath=str(usdz_path), selected_objects_only=False)
 
 
 if __name__ == "__main__":

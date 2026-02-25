@@ -1,14 +1,22 @@
-import { Download, Printer } from "lucide-react";
+import { Download, Printer, Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { useMemo } from "react";
 
 interface ScanDownloadsProps {
   scanId: string;
 }
 
+function supportsARQuickLook(): boolean {
+  const a = document.createElement("a");
+  return a.relList?.supports?.("ar") ?? false;
+}
+
 export default function ScanDownloads({ scanId }: ScanDownloadsProps) {
   const fbxUrl = `/api/scans/${scanId}/fbx`;
+  const usdzUrl = `/api/scans/${scanId}/usdz`;
   const printUrl = `/api/scans/${scanId}/print.pdf`;
+  const showAR = useMemo(() => supportsARQuickLook(), []);
 
   return (
     <motion.div
@@ -20,6 +28,20 @@ export default function ScanDownloads({ scanId }: ScanDownloadsProps) {
       <h3 className="text-lg font-semibold mb-4">Downloads</h3>
 
       <div className="flex flex-col sm:flex-row gap-3">
+        {showAR && (
+          <a rel="ar" href={usdzUrl}>
+            <img
+              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/%3E"
+              alt="View in AR"
+              style={{ display: "none" }}
+            />
+            <Button className="gap-2" asChild={false}>
+              <Box className="w-4 h-4" />
+              View in AR
+            </Button>
+          </a>
+        )}
+
         <a href={fbxUrl} download>
           <Button variant="outline" className="gap-2">
             <Download className="w-4 h-4" />

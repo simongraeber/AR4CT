@@ -48,6 +48,7 @@ async def _run_blender(scan_id: str) -> Path:
     scan_dir = get_scan_dir(scan_id)
     stl_dir = scan_dir / "stl"
     output_fbx = scan_dir / "model.fbx"
+    output_usdz = scan_dir / "model.usdz"
     offset_file = scan_dir / "model_offset.json"
 
     cmd = [
@@ -57,6 +58,7 @@ async def _run_blender(scan_id: str) -> Path:
         "--",
         "--stl-dir", str(stl_dir),
         "--output", str(output_fbx),
+        "--usdz-output", str(output_usdz),
         "--colors", str(ORGAN_COLORS_JSON),
         "--offset-file", str(offset_file),
     ]
@@ -127,6 +129,13 @@ async def run_post_processing(scan_id: str) -> dict:
     metadata["status"] = "completed"
     metadata["has_fbx"] = True
     metadata["fbx_size"] = fbx_path.stat().st_size
+
+    usdz_file = get_scan_dir(scan_id) / "model.usdz"
+    if usdz_file.exists():
+        metadata["has_usdz"] = True
+        metadata["usdz_size"] = usdz_file.stat().st_size
+    else:
+        metadata["has_usdz"] = False
 
     # Load the centering offset written by Blender so we can transform
     # annotation points into FBX-model coordinate space later.
